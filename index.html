@@ -1,15 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    <link rel="stylesheet" href="./style.css">
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -35,17 +24,17 @@
     <section id="entradas">
         <div class="category-title">Entradas</div>
         <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1506280754576-f6fa8a873550?q=80&w=200" class="item-img">
+            <img src="https://images.unsplash.com/photo-1506280754576-f6fa8a873550?q=80&w=200" class="item-img" alt="Bruschettas" loading="lazy">
             <div class="item-content">
                 <div class="item-info"><h3>Bruschettas Salmón</h3><span class="price">$1.200</span></div>
-                <button class="btn-order" onclick="enviarPedido('Bruschetta Salmón', '1200')">PEDIR</button>
+                <button class="btn-order" onclick="agregarAlCarrito('Bruschetta Salmón', 1200)">AGREGAR</button>
             </div>
         </div>
         <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=200" class="item-img">
+            <img src="https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=200" class="item-img" alt="Empanadas" loading="lazy">
             <div class="item-content">
                 <div class="item-info"><h3>Empanadas Criollas</h3><span class="price">$850</span></div>
-                <button class="btn-order" onclick="enviarPedido('Empanadas Criollas', '850')">PEDIR</button>
+                <button class="btn-order" onclick="agregarAlCarrito('Empanadas Criollas', 850)">AGREGAR</button>
             </div>
         </div>
     </section>
@@ -53,10 +42,10 @@
     <section id="comidas">
         <div class="category-title">Comidas</div>
         <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=200" class="item-img">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=200" class="item-img" alt="Burger" loading="lazy">
             <div class="item-content">
                 <div class="item-info"><h3>Burger Premium</h3><span class="price">$2.100</span></div>
-                <button class="btn-order" onclick="enviarPedido('Burger Premium', '2100')">PEDIR</button>
+                <button class="btn-order" onclick="agregarAlCarrito('Burger Premium', 2100)">AGREGAR</button>
             </div>
         </div>
     </section>
@@ -64,23 +53,31 @@
     <section id="sin-alcohol">
         <div class="category-title">Sin Alcohol</div>
         <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200" class="item-img">
+            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200" class="item-img" alt="Limonada" loading="lazy">
             <div class="item-content">
                 <div class="item-info"><h3>Limonada Menta</h3><span class="price">$650</span></div>
-                <button class="btn-order" onclick="enviarPedido('Limonada Menta', '650')">PEDIR</button>
+                <button class="btn-order" onclick="agregarAlCarrito('Limonada Menta', 650)">AGREGAR</button>
             </div>
         </div>
     </section>
 
-    <section id="con-alcohol">
-        <div class="category-title">Con Alcohol</div>
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=200" class="item-img">
-            <div class="item-content">
-                <div class="item-info"><h3>Cerveza Pinta</h3><span class="price">$1.100</span></div>
-                <button class="btn-order" onclick="enviarPedido('Cerveza', '1100')">PEDIR</button>
-            </div>
+    <section id="carrito" class="cart-container">
+        <div class="category-title">Tu Pedido</div>
+        <div id="lista-carrito">
+            <p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>
         </div>
+        
+        <div class="cart-total">
+            <span>TOTAL:</span>
+            <span id="total-precio">$0</span>
+        </div>
+
+        <div class="input-mesa">
+            <label>N° DE MESA:</label>
+            <input type="number" id="input-mesa" placeholder="Ej: 5">
+        </div>
+
+        <button class="btn-finalizar" onclick="enviarWhatsApp()">FINALIZAR PEDIDO</button>
     </section>
 
     <footer>
@@ -90,9 +87,4 @@
 
 <script src="script.js"></script>
 </body>
-</html>
-    <script  src="./script.js"></script>
-
-  </body>
-  
 </html>
