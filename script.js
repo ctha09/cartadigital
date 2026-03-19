@@ -6,26 +6,29 @@
 const TELEFONO_WHATSAPP = "543751246552";
 let carrito = [];
 
-// Agrega un producto al array y actualiza la vista
 function agregarAlCarrito(producto, precio) {
+    // Agregar al arreglo
     carrito.push({ nombre: producto, precio: precio });
-    renderizarCarrito();
+    
+    // Feedback visual simple (opcional)
+    console.log("Agregado: " + producto);
+    
+    actualizarVistaCarrito();
 }
 
-// Dibuja el contenido del carrito en el HTML
-function renderizarCarrito() {
-    const contenedor = document.getElementById('lista-carrito');
-    const totalElemento = document.getElementById('total-precio');
+function actualizarVistaCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    const totalTxt = document.getElementById('total-precio');
     
-    contenedor.innerHTML = "";
-    let acumulado = 0;
+    lista.innerHTML = "";
+    let suma = 0;
 
     if (carrito.length === 0) {
-        contenedor.innerHTML = '<p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>';
+        lista.innerHTML = '<p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>';
     } else {
-        carrito.forEach((item, index) => {
-            acumulado += item.precio;
-            contenedor.innerHTML += `
+        carrito.forEach((item) => {
+            suma += item.precio;
+            lista.innerHTML += `
                 <div class="item-carrito">
                     <span>${item.nombre}</span>
                     <span>$${item.precio}</span>
@@ -34,41 +37,38 @@ function renderizarCarrito() {
         });
     }
 
-    totalElemento.innerText = `$${acumulado}`;
+    totalTxt.innerText = `$${suma}`;
 }
 
-// Procesa el pedido y abre WhatsApp
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
 
     if (carrito.length === 0) {
-        alert("¡Tu carrito está vacío!");
+        alert("El carrito está vacío.");
         return;
     }
 
     if (!mesa) {
-        alert("Por favor, ingresa el número de tu mesa.");
+        alert("Por favor, ingresa el número de mesa.");
         return;
     }
 
-    // Armar el listado de productos
-    let listado = "";
-    let totalFinal = 0;
+    let detalle = "";
+    let totalPedido = 0;
 
     carrito.forEach(item => {
-        listado += `• ${item.nombre} ($${item.precio})\n`;
-        totalFinal += item.precio;
+        detalle += `• ${item.nombre} ($${item.precio})\n`;
+        totalPedido += item.precio;
     });
 
-    // Crear el mensaje formateado
-    const mensaje = encodeURIComponent(
+    const texto = encodeURIComponent(
         `*NUEVO PEDIDO - MESA ${mesa}*\n` +
         `----------------------------------\n` +
-        listado +
+        detalle +
         `----------------------------------\n` +
-        `*TOTAL A PAGAR: $${totalFinal}*\n\n` +
+        `*TOTAL: $${totalPedido}*\n\n` +
         `_Enviado desde el Menú Digital_`
     );
 
-    window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${mensaje}`, '_blank');
+    window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${texto}`, '_blank');
 }
