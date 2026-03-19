@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Culinaria | Menú Digital</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Culinaria</h1>
+        <p class="subtitle">EXPERIENCIA ARTESANAL</p>
+    </header>
+
+    <nav class="nav-sectors">
+        <a href="#entradas" class="nav-item">ENTRADAS</a>
+        <a href="#comidas" class="nav-item">COMIDAS</a>
+        <a href="#sin-alcohol" class="nav-item">SIN ALCOHOL</a>
+        <a href="#con-alcohol" class="nav-item">CON ALCOHOL</a>
+    </nav>
+
+    <section id="entradas">
+        <div class="category-title">Entradas</div>
+        <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1506280754576-f6fa8a873550?q=80&w=200" class="item-img">
+            <div class="item-content">
+                <div class="item-info"><h3>Bruschettas Salmón</h3><span class="price">$1.200</span></div>
+                <button class="btn-order" onclick="enviarPedido('Bruschetta Salmón', '1200')">PEDIR</button>
+            </div>
+        </div>
+        <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=200" class="item-img">
+            <div class="item-content">
+                <div class="item-info"><h3>Empanadas Criollas</h3><span class="price">$850</span></div>
+                <button class="btn-order" onclick="enviarPedido('Empanadas Criollas', '850')">PEDIR</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="comidas">
+        <div class="category-title">Comidas</div>
+        <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=200" class="item-img">
+            <div class="item-content">
+                <div class="item-info"><h3>Burger Premium</h3><span class="price">$2.100</span></div>
+                <button class="btn-order" onclick="enviarPedido('Burger Premium', '2100')">PEDIR</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="sin-alcohol">
+        <div class="category-title">Sin Alcohol</div>
+        <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200" class="item-img">
+            <div class="item-content">
+                <div class="item-info"><h3>Limonada Menta</h3><span class="price">$650</span></div>
+                <button class="btn-order" onclick="enviarPedido('Limonada Menta', '650')">PEDIR</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="con-alcohol">
+        <div class="category-title">Con Alcohol</div>
+        <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=200" class="item-img">
+            <div class="item-content">
+                <div class="item-info"><h3>Cerveza Pinta</h3><span class="price">$1.100</span></div>
+                <button class="btn-order" onclick="enviarPedido('Cerveza', '1100')">PEDIR</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p class="signature">Programada por: Carlos Thomas Acosta</p>
+    </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>
