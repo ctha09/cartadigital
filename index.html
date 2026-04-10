@@ -13,6 +13,7 @@
     <header>
         <h1>Culinaria</h1>
         <p class="subtitle">EXPERIENCIA ARTESANAL</p>
+        <button id="btn-admin-view" onclick="toggleAdmin()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 10px; border-radius:15px; font-size:0.6rem; margin-top:10px; cursor:pointer; font-weight:600;">MANTENIMIENTO</button>
     </header>
 
     <nav class="nav-sectors">
@@ -22,22 +23,22 @@
         <a href="#con-alcohol" class="nav-item">CON ALCOHOL</a>
     </nav>
 
-    <section id="form-admin" style="display:none; margin-top: 20px; padding: 20px; border: 1px dashed var(--gold); border-radius: 12px; background: rgba(197, 160, 89, 0.05);">
-        <div class="category-title" style="margin-top:0;">Panel Editor</div>
+    <section id="form-admin" style="display:none; margin: 20px 0; padding: 20px; border: 1px solid var(--gold); border-radius: 12px; background: rgba(197, 160, 89, 0.05);">
+        <div class="category-title" style="margin-top:0;">Nuevo Producto</div>
         <div class="input-mesa">
             <input type="text" id="add-nombre" placeholder="Nombre del plato">
             <input type="number" id="add-precio" placeholder="Precio">
-            <select id="add-categoria" style="background:#111; color:white; padding:15px; border:1px solid var(--gold); border-radius:6px; margin-bottom:10px; width:100%;">
+            <select id="add-categoria" style="background:#111; color:white; padding:15px; border:1px solid var(--gold); border-radius:6px; margin-bottom:10px; width:100%; font-family: 'Poppins';">
                 <option value="entradas">Entradas</option>
                 <option value="comidas">Comidas</option>
                 <option value="sin-alcohol">Sin Alcohol</option>
                 <option value="con-alcohol">Con Alcohol</option>
             </select>
-            <label style="font-size: 0.8rem; color: var(--gold); margin-bottom: 5px; display: block;">Foto del plato:</label>
-            <input type="file" id="add-imagen" accept="image/*">
+            <label style="font-size: 0.8rem; color: var(--gold); margin-bottom: 5px; display: block;">Seleccionar foto de galería:</label>
+            <input type="file" id="add-imagen" accept="image/*" style="border:none; padding:10px 0;">
         </div>
-        <button class="btn-finalizar" onclick="guardarNuevoProducto()" style="margin-top:10px;">PUBLICAR PLATO</button>
-        <button onclick="cerrarAdmin()" style="background:none; border:none; color:white; width:100%; margin-top:10px; opacity:0.5; cursor:pointer;">Cerrar Editor</button>
+        <button class="btn-finalizar" onclick="guardarNuevoProducto()" style="margin-top:10px;">SUBIR AL MENÚ</button>
+        <button onclick="cerrarAdmin()" style="background:none; border:none; color:white; width:100%; margin-top:15px; opacity:0.5; cursor:pointer; font-size:0.8rem;">[ Cerrar Panel ]</button>
     </section>
 
     <main id="menu-dinamico">
@@ -45,17 +46,14 @@
             <div class="category-title">Entradas</div>
             <div class="lista"></div>
         </section>
-
         <section id="comidas">
             <div class="category-title">Comidas</div>
             <div class="lista"></div>
         </section>
-
         <section id="sin-alcohol">
             <div class="category-title">Sin Alcohol</div>
             <div class="lista"></div>
         </section>
-
         <section id="con-alcohol">
             <div class="category-title">Con Alcohol</div>
             <div class="lista"></div>
@@ -67,22 +65,19 @@
         <div id="lista-carrito">
             <p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>
         </div>
-        
         <div class="cart-total">
             <span>TOTAL:</span>
             <span id="total-precio">$0</span>
         </div>
-
         <div class="input-mesa">
             <label>N° DE MESA:</label>
             <input type="number" id="input-mesa" placeholder="Ej: 5" pattern="[0-9]*" inputmode="numeric">
         </div>
-
         <button class="btn-finalizar" onpointerdown="enviarWhatsApp()">FINALIZAR PEDIDO</button>
     </section>
 
     <footer>
-        <p class="signature" onclick="toggleAdmin()" style="cursor:pointer;">Programada por: Carlos Thomas Acosta</p>
+        <p class="signature">Programada por: Carlos Thomas Acosta</p>
     </footer>
 </div>
 
