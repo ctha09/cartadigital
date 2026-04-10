@@ -2,64 +2,75 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Culinaria | Menú Digital</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-<div class="container">
     <header>
-        <div style="text-align: right;">
-            <button id="btn-admin-toggle" onclick="toggleAdmin()" class="btn-admin-access">MODO ADMIN</button>
-        </div>
-        <h1>Culinaria</h1>
-        <p class="subtitle">EXPERIENCIA ARTESANAL</p>
+        <h1>CULINARIA</h1>
+        <button id="btn-admin-toggle" onclick="toggleAdmin()">MODO ADMIN</button>
     </header>
 
-    <div id="form-nuevo-producto" class="admin-form-box" style="display:none;">
-        <h3>Nuevo Producto</h3>
+    <section id="form-nuevo-producto" style="display:none; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 10px;">
+        <h2 style="color: #d4af37;">Nuevo Producto</h2>
         <input type="text" id="add-nombre" placeholder="Nombre del plato">
-        <input type="number" id="add-precio" placeholder="Precio (ej: 1500)">
+        <input type="number" id="add-precio" placeholder="Precio">
+        
         <select id="add-categoria">
             <option value="entradas">Entradas</option>
             <option value="comidas">Comidas</option>
             <option value="sin-alcohol">Sin Alcohol</option>
             <option value="con-alcohol">Con Alcohol</option>
         </select>
-        <input type="text" id="add-imagen" placeholder="URL de la imagen">
-        <button onclick="guardarNuevoProducto()" class="btn-save-admin">PUBLICAR EN MENÚ</button>
-    </div>
 
-    <nav class="nav-sectors">
-        <a href="#entradas" class="nav-item">ENTRADAS</a>
-        <a href="#comidas" class="nav-item">COMIDAS</a>
-        <a href="#sin-alcohol" class="nav-item">SIN ALCOHOL</a>
-        <a href="#con-alcohol" class="nav-item">CON ALCOHOL</a>
-    </nav>
-
-    <div id="menu-dinamico">
-        <section id="entradas"><div class="category-title">Entradas</div><div class="lista"></div></section>
-        <section id="comidas"><div class="category-title">Comidas</div><div class="lista"></div></section>
-        <section id="sin-alcohol"><div class="category-title">Sin Alcohol</div><div class="lista"></div></section>
-        <section id="con-alcohol"><div class="category-title">Con Alcohol</div><div class="lista"></div></section>
-    </div>
-
-    <section id="carrito" class="cart-container">
-        <div class="category-title">Tu Pedido</div>
-        <div id="lista-carrito"><p style="text-align: center; opacity: 0.5;">El carrito está vacío</p></div>
-        <div class="cart-total"><span>TOTAL:</span><span id="total-precio">$0</span></div>
-        <div class="input-mesa">
-            <label>N° DE MESA:</label>
-            <input type="number" id="input-mesa" placeholder="Ej: 5" inputmode="numeric">
+        <div style="margin: 15px 0;">
+            <label style="display: block; margin-bottom: 8px; color: #d4af37; font-size: 0.9em;">
+                📷 Seleccionar foto del plato:
+            </label>
+            <input type="file" id="add-imagen" accept="image/*" style="color: white; font-size: 0.8em;">
         </div>
-        <button class="btn-finalizar" onclick="enviarWhatsApp()">FINALIZAR PEDIDO</button>
+
+        <button onclick="guardarNuevoProducto()" style="width:100%; background:#d4af37; color:black; font-weight:bold; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">PUBLICAR EN MENÚ</button>
     </section>
 
-    <footer><p class="signature">Programada por: Carlos Thomas Acosta</p></footer>
-</div>
+    <nav class="categorias-nav">
+        <button onclick="document.getElementById('entradas').scrollIntoView()">ENTRADAS</button>
+        <button onclick="document.getElementById('comidas').scrollIntoView()">COMIDAS</button>
+        <button onclick="document.getElementById('sin-alcohol').scrollIntoView()">SIN ALCOHOL</button>
+        <button onclick="document.getElementById('con-alcohol').scrollIntoView()">CON ALCOHOL</button>
+    </nav>
 
-<script src="script.js"></script>
+    <main id="menu-container">
+        <section id="entradas" class="categoria-section">
+            <h2>Entradas</h2>
+            <div class="lista"></div>
+        </section>
+        <section id="comidas" class="categoria-section">
+            <h2>Comidas</h2>
+            <div class="lista"></div>
+        </section>
+        <section id="sin-alcohol" class="categoria-section">
+            <h2>Sin Alcohol</h2>
+            <div class="lista"></div>
+        </section>
+        <section id="con-alcohol" class="categoria-section">
+            <h2>Con Alcohol</h2>
+            <div class="lista"></div>
+        </section>
+    </main>
+
+    <div id="carrito-flotante">
+        <h3>Tu Pedido</h3>
+        <div id="lista-carrito"></div>
+        <hr>
+        <div class="total">Total: <span id="total-precio">$0</span></div>
+        <input type="text" id="input-mesa" placeholder="N° de Mesa">
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
