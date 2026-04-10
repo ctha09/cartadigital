@@ -1,7 +1,6 @@
 // CONFIGURACIÓN DE CONEXIÓN
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co"; 
-// Clave obtenida de tu panel de configuración
-const SUPABASE_KEY = "sb_publishable_8rn7tgMAt037eu7RfkIIyA_S10VA..."; 
+const SUPABASE_KEY = "sb_publishable_8rn7tgMAt037eu7RfkIIyA_S10VA..."; // Pegá tu Key aquí
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEFONO_WHATSAPP = "543751246552";
@@ -11,11 +10,11 @@ let esAdmin = false;
 // 1. CARGAR MENÚ
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
-        .from('Productos') // Ajustado a mayúscula para coincidir con tu DB
+        .from('Productos')
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) return console.error("Error cargando menú:", error);
+    if (error) return console.error("Error:", error);
 
     const categorias = ['entradas', 'comidas', 'sin-alcohol', 'con-alcohol'];
     
@@ -50,7 +49,7 @@ async function cargarMenu() {
 function toggleAdmin() {
     if (!esAdmin) {
         const pin = prompt("PIN de Seguridad:");
-        if (pin === "031223") { // Tu PIN configurado
+        if (pin === "031223") {
             esAdmin = true;
             document.getElementById('form-nuevo-producto').style.display = 'block';
             document.getElementById('btn-admin-toggle').innerText = "SALIR MODO EDITOR";
@@ -76,7 +75,6 @@ async function guardarNuevoProducto() {
     }
 
     try {
-        // A. Subir imagen al Storage (Bucket: imagenes-menu)
         const nombreArchivo = `${Date.now()}_${fotoArchivo.name}`;
         const { data: uploadData, error: uploadError } = await _supabase.storage
             .from('imagenes-menu')
@@ -84,34 +82,29 @@ async function guardarNuevoProducto() {
 
         if (uploadError) throw uploadError;
 
-        // B. Obtener URL de la imagen
         const { data: urlData } = _supabase.storage
             .from('imagenes-menu')
             .getPublicUrl(nombreArchivo);
 
-        const urlImagen = urlData.publicUrl;
-
-        // C. Guardar en la tabla Productos
         const { error: dbError } = await _supabase
             .from('Productos')
             .insert([{ 
                 nombre: nombre, 
                 precio: parseInt(precio), 
                 categoria: categoria, 
-                imagen: urlImagen 
+                imagen: urlData.publicUrl 
             }]);
 
         if (dbError) throw dbError;
 
         alert("¡Producto publicado!");
         location.reload();
-
     } catch (err) {
-        alert("Error al publicar: " + err.message);
+        alert("Error: " + err.message);
     }
 }
 
-// 3. EDITAR Y ELIMINAR
+// 3. EDITAR Y ELIMINAR (Tus funciones originales)
 async function editarPrecio(id, precioActual) {
     const nuevo = prompt("Nuevo precio:", precioActual);
     if (nuevo) {
@@ -127,7 +120,7 @@ async function eliminarProducto(id) {
     }
 }
 
-// 4. CARRITO
+// 4. CARRITO (Tu lógica original)
 function agregarAlCarrito(producto, precio) {
     carrito.push({ nombre: producto, precio: precio });
     actualizarVistaCarrito();
@@ -141,9 +134,9 @@ function actualizarVistaCarrito() {
     
     carrito.forEach((item, index) => {
         suma += item.precio;
-        lista.innerHTML += `<div class="item-carrito" style="display:flex; justify-content:space-between; margin-bottom:5px;">
+        lista.innerHTML += `<div class="item-carrito">
             <span>${item.nombre}</span>
-            <span>$${item.precio} <button onclick="quitarDelCarrito(${index})" style="background:none; border:none; color:red; cursor:pointer;">✕</button></span>
+            <span>$${item.precio} <button onclick="quitarDelCarrito(${index})">✕</button></span>
         </div>`;
     });
     totalTxt.innerText = `$${suma}`;
@@ -157,7 +150,6 @@ function quitarDelCarrito(index) {
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
     if (carrito.length === 0 || !mesa) return alert("Agrega productos e indica la mesa.");
-    
     let detalle = "";
     carrito.forEach(item => detalle += `• ${item.nombre} ($${item.precio})\n`);
     const texto = encodeURIComponent(`*NUEVO PEDIDO - MESA ${mesa}*\n---\n${detalle}*TOTAL: ${document.getElementById('total-precio').innerText}*`);
