@@ -1,71 +1,167 @@
+// CONFIGURACIÓN DE CONEXIÓN
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co"; 
-const SUPABASE_KEY = "TU_NUEVA_PUBLISHABLE_KEY_AQUI"; // Usá la de arriba en tu foto
+// Clave obtenida de tu panel de configuración
+const SUPABASE_KEY = "sb_publishable_8rn7tgMAt037eu7RfkIIyA_S10VA..."; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEFONO_WHATSAPP = "543751246552";
 let carrito = [];
 let esAdmin = false;
 
-// CARGAR EL MENÚ
+// 1. CARGAR MENÚ
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
-        .from('productos') // Tabla en minúsculas
+        .from('Productos') // Ajustado a mayúscula para coincidir con tu DB
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) return console.error(error);
+    if (error) return console.error("Error cargando menú:", error);
 
-    const categorias = ['entradas', 'comidas', 'bebidas'];
+    const categorias = ['entradas', 'comidas', 'sin-alcohol', 'con-alcohol'];
+    
     categorias.forEach(cat => {
         const divLista = document.querySelector(`#${cat} .lista`);
         if (!divLista) return;
-        divLista.innerHTML = "";
+        divLista.innerHTML = ""; 
         
         const filtrados = productos.filter(p => p.categoria === cat);
+
         filtrados.forEach(p => {
-            let adminBtns = esAdmin ? `<button onclick="eliminarProducto(${p.id})">🗑</button>` : "";
+            let controlesAdmin = esAdmin ? `
+                <div class="admin-actions">
+                    <button onclick="editarPrecio(${p.id}, ${p.precio})">✎ Precio</button>
+                    <button onclick="eliminarProducto(${p.id})" class="btn-del">🗑 Borrar</button>
+                </div>` : "";
+
             divLista.innerHTML += `
                 <div class="menu-item">
-                    <img src="${p.imagen}" class="item-img">
-                    <div class="info">
-                        <h3>${p.nombre}</h3>
-                        <p>$${p.precio}</p>
-                        ${adminBtns}
-                        <button onclick="agregarCarrito('${p.nombre}', ${p.precio})">AGREGAR</button>
+                    <img src="${p.imagen}" class="item-img" alt="${p.nombre}">
+                    <div class="item-content">
+                        <div class="item-info"><h3>${p.nombre}</h3><span class="price">$${p.precio}</span></div>
+                        ${controlesAdmin}
+                        <button class="btn-order" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">AGREGAR</button>
                     </div>
                 </div>`;
         });
     });
 }
 
-// GUARDAR CON GALERÍA
+// 2. MODO ADMINISTRADOR
+function toggleAdmin() {
+    if (!esAdmin) {
+        const pin = prompt("PIN de Seguridad:");
+        if (pin === "031223") { // Tu PIN configurado
+            esAdmin = true;
+            document.getElementById('form-nuevo-producto').style.display = 'block';
+            document.getElementById('btn-admin-toggle').innerText = "SALIR MODO EDITOR";
+            cargarMenu();
+        } else { alert("PIN Incorrecto"); }
+    } else {
+        esAdmin = false;
+        document.getElementById('form-nuevo-producto').style.display = 'none';
+        document.getElementById('btn-admin-toggle').innerText = "MODO ADMIN";
+        cargarMenu();
+    }
+}
+
+// SUBIR IMAGEN Y GUARDAR PRODUCTO
 async function guardarNuevoProducto() {
     const nombre = document.getElementById('add-nombre').value;
     const precio = document.getElementById('add-precio').value;
     const categoria = document.getElementById('add-categoria').value;
-    const foto = document.getElementById('add-imagen').files[0];
+    const fotoArchivo = document.getElementById('add-imagen').files[0];
 
-    if(!nombre || !precio || !foto) return alert("Faltan datos");
+    if(!nombre || !precio || !fotoArchivo) {
+        return alert("Completa nombre, precio y elige una foto de la galería.");
+    }
 
-    // 1. Subir al Storage
-    const fileName = `${Date.now()}_${foto.name}`;
-    const { data: upData, error: upErr } = await _supabase.storage.from('imagenes-menu').upload(fileName, foto);
-    if(upErr) return alert("Error foto: " + upErr.message);
+    try {
+        // A. Subir imagen al Storage (Bucket: imagenes-menu)
+        const nombreArchivo = `${Date.now()}_${fotoArchivo.name}`;
+        const { data: uploadData, error: uploadError } = await _supabase.storage
+            .from('imagenes-menu')
+            .upload(nombreArchivo, fotoArchivo);
 
-    // 2. Obtener URL y guardar en tabla
-    const { data: url } = _supabase.storage.from('imagenes-menu').getPublicUrl(fileName);
-    await _supabase.from('productos').insert([{ nombre, precio: parseInt(precio), categoria, imagen: url.publicUrl }]);
+        if (uploadError) throw uploadError;
 
-    location.reload();
+        // B. Obtener URL de la imagen
+        const { data: urlData } = _supabase.storage
+            .from('imagenes-menu')
+            .getPublicUrl(nombreArchivo);
+
+        const urlImagen = urlData.publicUrl;
+
+        // C. Guardar en la tabla Productos
+        const { error: dbError } = await _supabase
+            .from('Productos')
+            .insert([{ 
+                nombre: nombre, 
+                precio: parseInt(precio), 
+                categoria: categoria, 
+                imagen: urlImagen 
+            }]);
+
+        if (dbError) throw dbError;
+
+        alert("¡Producto publicado!");
+        location.reload();
+
+    } catch (err) {
+        alert("Error al publicar: " + err.message);
+    }
 }
 
-function toggleAdmin() {
-    const pin = prompt("PIN:");
-    if(pin === "031223") { // Tu PIN guardado
-        esAdmin = true;
-        document.getElementById('form-nuevo-producto').style.display = 'block';
+// 3. EDITAR Y ELIMINAR
+async function editarPrecio(id, precioActual) {
+    const nuevo = prompt("Nuevo precio:", precioActual);
+    if (nuevo) {
+        await _supabase.from('Productos').update({ precio: parseInt(nuevo) }).eq('id', id);
         cargarMenu();
     }
+}
+
+async function eliminarProducto(id) {
+    if (confirm("¿Eliminar este plato?")) {
+        await _supabase.from('Productos').delete().eq('id', id);
+        cargarMenu();
+    }
+}
+
+// 4. CARRITO
+function agregarAlCarrito(producto, precio) {
+    carrito.push({ nombre: producto, precio: precio });
+    actualizarVistaCarrito();
+}
+
+function actualizarVistaCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    const totalTxt = document.getElementById('total-precio');
+    lista.innerHTML = "";
+    let suma = 0;
+    
+    carrito.forEach((item, index) => {
+        suma += item.precio;
+        lista.innerHTML += `<div class="item-carrito" style="display:flex; justify-content:space-between; margin-bottom:5px;">
+            <span>${item.nombre}</span>
+            <span>$${item.precio} <button onclick="quitarDelCarrito(${index})" style="background:none; border:none; color:red; cursor:pointer;">✕</button></span>
+        </div>`;
+    });
+    totalTxt.innerText = `$${suma}`;
+}
+
+function quitarDelCarrito(index) {
+    carrito.splice(index, 1);
+    actualizarVistaCarrito();
+}
+
+function enviarWhatsApp() {
+    const mesa = document.getElementById('input-mesa').value;
+    if (carrito.length === 0 || !mesa) return alert("Agrega productos e indica la mesa.");
+    
+    let detalle = "";
+    carrito.forEach(item => detalle += `• ${item.nombre} ($${item.precio})\n`);
+    const texto = encodeURIComponent(`*NUEVO PEDIDO - MESA ${mesa}*\n---\n${detalle}*TOTAL: ${document.getElementById('total-precio').innerText}*`);
+    window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${texto}`, '_blank');
 }
 
 document.addEventListener('DOMContentLoaded', cargarMenu);
