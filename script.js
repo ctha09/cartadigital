@@ -4,7 +4,7 @@
 
 // 1. CONFIGURACIÓN DE CONEXIÓN
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co"; 
-const SUPABASE_KEY = "TU_CLAVE_ANON_LARGA_AQUÍ"; // PEGA AQUÍ TU KEY ANON (LA LARGA)
+const SUPABASE_KEY = "TU_CLAVE_ANON_LARGA_AQUÍ"; // sb_publishable_8rn7tgMAtO37eu7RfkIIyA_Sl0VAqlm
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEFONO_WHATSAPP = "543751246552";
