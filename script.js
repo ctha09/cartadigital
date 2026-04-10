@@ -1,7 +1,6 @@
-const SUPABASE_URL = "uuhtrbzviodclioqtmca";
-const SUPABASE_KEY = "031223";
+const SUPABASE_URL = "https://abcde12345.supabase.co"; // uuhtrbzviodclioqtmca
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // 031223
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 const TELEFONO_WHATSAPP = "543751246552";
 let carrito = [];
 let esAdmin = false;
