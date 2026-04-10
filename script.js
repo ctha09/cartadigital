@@ -1,30 +1,30 @@
 /**
- * Culinaria - Menú Digital con Supabase
+ * Culinaria - Menú Digital
  * Programado por: Carlos Thomas Acosta
  */
 
-// CONFIGURACIÓN DE SUPABASE
+// 1. CONFIGURACIÓN DE CONEXIÓN
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co";
-const SUPABASE_KEY = "TU_KEY_COMPLETA_AQUI"; // Pegá tu clave 'anon public'
+const SUPABASE_KEY = "TU_KEY_ANON_AQUI"; // Pegá tu clave 'anon public' aquí
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEFONO_WHATSAPP = "543751246552";
 let carrito = [];
 let esAdmin = false;
 
-// 1. CARGAR PRODUCTOS (LECTURA)
+// 2. CARGAR MENÚ (CORREGIDO: tabla 'productos' en minúsculas)
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
-        .from('Productos') // Asegurate que en Supabase empiece con Mayúscula
+        .from('productos') // Cambiado a minúsculas según el error de tu captura
         .select('*')
         .order('nombre', { ascending: true });
 
     if (error) {
-        console.error("Error cargando base de datos:", error);
+        console.error("Error de Supabase:", error.message);
         return;
     }
 
-    const categorias = ['entradas', 'comidas', 'sin-alcohol', 'con-alcohol'];
+    const categorias = ['entradas', 'comidas', 'bebidas']; // Ajustado a tus nuevas categorías
     
     categorias.forEach(cat => {
         const contenedor = document.querySelector(`#${cat} .lista`);
@@ -49,23 +49,22 @@ async function cargarMenu() {
                             <button class="btn-order" onpointerdown="agregarAlCarrito('${p.nombre}', ${p.precio})">AGREGAR</button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     });
 }
 
-// 2. COMPRESIÓN Y SUBIDA (MODO ADMIN)
+// 3. SUBIDA CON COMPRESIÓN AUTOMÁTICA
 async function guardarNuevoProducto() {
     const nombre = document.getElementById('add-nombre').value;
     const precio = document.getElementById('add-precio').value;
     const categoria = document.getElementById('add-categoria').value;
     const fotoOriginal = document.getElementById('add-imagen').files[0];
 
-    if(!nombre || !precio || !fotoOriginal) return alert("Por favor, completa todos los campos y la imagen.");
+    if(!nombre || !precio || !fotoOriginal) return alert("Completa todos los campos.");
 
     try {
-        // Función interna para comprimir antes de subir
+        // Optimización de imagen para ahorrar espacio en Supabase
         const optimizarImagen = (archivo) => {
             return new Promise((resolve) => {
                 const reader = new FileReader();
@@ -78,14 +77,11 @@ async function guardarNuevoProducto() {
                         const MAX_ANCHO = 1080;
                         let ancho = img.width;
                         let alto = img.height;
-
                         if (ancho > MAX_ANCHO) {
                             alto *= MAX_ANCHO / ancho;
                             ancho = MAX_ANCHO;
                         }
-
-                        canvas.width = ancho;
-                        canvas.height = alto;
+                        canvas.width = ancho; canvas.height = alto;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, ancho, alto);
                         canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7);
@@ -104,51 +100,40 @@ async function guardarNuevoProducto() {
 
         if (upError) throw upError;
 
-        // Obtener URL y guardar en Tabla
         const { data: urlData } = _supabase.storage.from('imagenes-menu').getPublicUrl(nombreArchivo);
         
-        const { error: dbError } = await _supabase.from('Productos').insert([
+        // Insertar en tabla 'productos'
+        const { error: dbError } = await _supabase.from('productos').insert([
             { nombre, precio: parseInt(precio), categoria, imagen: urlData.publicUrl }
         ]);
 
         if (dbError) throw dbError;
-
-        alert("¡Producto añadido!");
+        alert("¡Plato subido con éxito!");
         location.reload();
     } catch (e) {
-        alert("Error: " + e.message);
+        alert("Error crítico: " + e.message);
     }
 }
 
-// 3. GESTIÓN DE INTERFAZ ADMIN
+// 4. FUNCIONES DE ADMIN Y CARRITO
 function toggleAdmin() {
     const pin = prompt("PIN de Mantenimiento:");
-    if (pin === "031223") { // Tu PIN actualizado
+    if (pin === "031223") {
         esAdmin = true;
         document.getElementById('form-admin').style.display = 'block';
-        document.getElementById('btn-admin-view').style.display = 'none';
         cargarMenu();
     } else {
-        alert("PIN incorrecto");
+        alert("PIN Incorrecto");
     }
-}
-
-function cerrarAdmin() {
-    esAdmin = false;
-    document.getElementById('form-admin').style.display = 'none';
-    document.getElementById('btn-admin-view').style.display = 'inline-block';
-    cargarMenu();
 }
 
 async function eliminarProducto(id) {
-    if (confirm("¿Estás seguro de eliminar este plato?")) {
-        const { error } = await _supabase.from('Productos').delete().eq('id', id);
-        if (error) alert("Error al eliminar");
-        else cargarMenu();
+    if (confirm("¿Borrar plato?")) {
+        await _supabase.from('productos').delete().eq('id', id);
+        cargarMenu();
     }
 }
 
-// 4. LÓGICA DE CARRITO Y WHATSAPP
 function agregarAlCarrito(producto, precio) {
     carrito.push({ nombre: producto, precio: precio });
     actualizarVistaCarrito();
@@ -159,41 +144,20 @@ function actualizarVistaCarrito() {
     const totalTxt = document.getElementById('total-precio');
     lista.innerHTML = "";
     let suma = 0;
-
-    if (carrito.length === 0) {
-        lista.innerHTML = '<p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>';
-    } else {
-        carrito.forEach((item) => {
-            suma += item.precio;
-            lista.innerHTML += `
-                <div class="item-carrito">
-                    <span>${item.nombre}</span>
-                    <span>$${item.precio}</span>
-                </div>`;
-        });
-    }
+    carrito.forEach((item) => {
+        suma += item.precio;
+        lista.innerHTML += `<div class="item-carrito"><span>${item.nombre}</span><span>$${item.precio}</span></div>`;
+    });
     totalTxt.innerText = `$${suma}`;
 }
 
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
-    if (carrito.length === 0) return alert("El carrito está vacío.");
-    if (!mesa) return alert("Ingresá el número de mesa.");
-
+    if (carrito.length === 0 || !mesa) return alert("Falta el pedido o la mesa.");
     let detalle = "";
     carrito.forEach(item => detalle += `• ${item.nombre} ($${item.precio})\n`);
-
-    const texto = encodeURIComponent(
-        `*NUEVO PEDIDO - MESA ${mesa}*\n` +
-        `----------------------------------\n` +
-        detalle +
-        `----------------------------------\n` +
-        `*TOTAL: $${document.getElementById('total-precio').innerText.replace('$','') }*\n\n` +
-        `_Enviado desde el Menú Digital_`
-    );
-
+    const texto = encodeURIComponent(`*PEDIDO MESA ${mesa}*\n${detalle}*TOTAL: $${document.getElementById('total-precio').innerText}*`);
     window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${texto}`, '_blank');
 }
 
-// Inicialización
 document.addEventListener('DOMContentLoaded', cargarMenu);
