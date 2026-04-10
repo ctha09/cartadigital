@@ -1,5 +1,5 @@
-const SUPABASE_URL = "TU_URL_DE_SUPABASE";
-const SUPABASE_KEY = "TU_KEY_ANON_DE_SUPABASE";
+const SUPABASE_URL = "uuhtrbzviodclioqtmca";
+const SUPABASE_KEY = "031223";
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const TELEFONO_WHATSAPP = "543751246552";
