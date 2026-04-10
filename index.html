@@ -9,70 +9,64 @@
 </head>
 <body>
 
+    <div class="background-overlay"></div>
+
     <header>
-        <div class="logo-container">
-            <h1>CULINARIA</h1>
-            <button id="btn-admin-toggle" onclick="toggleAdmin()">MODO ADMIN</button>
+        <div class="header-content">
+            <h1 class="logo">CULINARIA</h1>
+            <button id="btn-admin-toggle" class="btn-admin" onclick="toggleAdmin()">MODO ADMIN</button>
         </div>
+        <nav class="categorias-nav">
+            <button onclick="document.getElementById('entradas').scrollIntoView({behavior: 'smooth'})">ENTRADAS</button>
+            <button onclick="document.getElementById('comidas').scrollIntoView({behavior: 'smooth'})">COMIDAS</button>
+            <button onclick="document.getElementById('bebidas').scrollIntoView({behavior: 'smooth'})">BEBIDAS</button>
+        </nav>
     </header>
 
-    <section id="form-nuevo-producto" class="admin-panel" style="display:none;">
-        <div class="form-card">
-            <h2>Nuevo Producto</h2>
-            <input type="text" id="add-nombre" placeholder="Nombre del plato">
-            <input type="number" id="add-precio" placeholder="Precio ($)">
-            
-            <select id="add-categoria">
-                <option value="entradas">Entradas</option>
-                <option value="comidas">Comidas</option>
-                <option value="sin-alcohol">Sin Alcohol</option>
-                <option value="con-alcohol">Con Alcohol</option>
-            </select>
+    <main class="main-layout">
+        <section class="menu-container">
+            <div id="entradas" class="categoria-section">
+                <h2 class="cat-title">Entradas</h2>
+                <div class="lista"></div>
+            </div>
+            <div id="comidas" class="categoria-section">
+                <h2 class="cat-title">Comidas</h2>
+                <div class="lista"></div>
+            </div>
+            <div id="bebidas" class="categoria-section">
+                <h2 class="cat-title">Bebidas</h2>
+                <div class="lista"></div>
+            </div>
+        </section>
 
-            <div class="file-input-container">
-                <label for="add-imagen">📸 Seleccionar de Galería</label>
-                <input type="file" id="add-imagen" accept="image/*">
+        <aside class="sidebar">
+            <div id="form-nuevo-producto" class="glass-card admin-panel" style="display:none;">
+                <h3>Nuevo Producto</h3>
+                <input type="text" id="add-nombre" placeholder="Nombre del plato">
+                <input type="number" id="add-precio" placeholder="Precio ($)">
+                <select id="add-categoria">
+                    <option value="entradas">Entradas</option>
+                    <option value="comidas">Comidas</option>
+                    <option value="sin-alcohol">Bebidas</option>
+                </select>
+                <div class="file-upload">
+                    <label for="add-imagen">📸 Galería</label>
+                    <input type="file" id="add-imagen" accept="image/*">
+                </div>
+                <button class="btn-primary" id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR</button>
             </div>
 
-            <button id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR EN MENÚ</button>
-            <p id="upload-status" style="display:none; color: gold; font-size: 0.8em; margin-top: 10px;">Subiendo... por favor espera.</p>
-        </div>
-    </section>
-
-    <nav class="categorias-nav">
-        <button onclick="document.getElementById('entradas').scrollIntoView({behavior: 'smooth'})">ENTRADAS</button>
-        <button onclick="document.getElementById('comidas').scrollIntoView({behavior: 'smooth'})">COMIDAS</button>
-        <button onclick="document.getElementById('sin-alcohol').scrollIntoView({behavior: 'smooth'})">BEBIDAS</button>
-    </nav>
-
-    <main id="menu-container">
-        <section id="entradas" class="categoria-section">
-            <h2>Entradas</h2>
-            <div class="lista"></div>
-        </section>
-        <section id="comidas" class="categoria-section">
-            <h2>Comidas</h2>
-            <div class="lista"></div>
-        </section>
-        <section id="sin-alcohol" class="categoria-section">
-            <h2>Sin Alcohol</h2>
-            <div class="lista"></div>
-        </section>
-        <section id="con-alcohol" class="categoria-section">
-            <h2>Con Alcohol</h2>
-            <div class="lista"></div>
-        </section>
+            <div class="glass-card carrito-container">
+                <h3>Tu Pedido</h3>
+                <div id="lista-carrito" class="lista-mini"></div>
+                <div class="carrito-footer">
+                    <div class="total-row">Total: <span id="total-precio">$0</span></div>
+                    <input type="number" id="input-mesa" placeholder="Mesa N°">
+                    <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
+                </div>
+            </div>
+        </aside>
     </main>
-
-    <div id="carrito-flotante">
-        <h3>Tu Pedido</h3>
-        <div id="lista-carrito"></div>
-        <div class="carrito-footer">
-            <div class="total">Total: <span id="total-precio">$0</span></div>
-            <input type="number" id="input-mesa" placeholder="Mesa N°">
-            <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>
