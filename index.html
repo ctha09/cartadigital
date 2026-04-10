@@ -8,14 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
     <div class="background-overlay"></div>
 
     <header>
-        <div class="header-content">
-            <h1 class="logo">CULINARIA</h1>
-            <button id="btn-admin-toggle" class="btn-admin" onclick="toggleAdmin()">MODO ADMIN</button>
-        </div>
+        <h1 class="logo">CULINARIA</h1>
+        <button id="btn-admin-toggle" class="btn-admin" onclick="toggleAdmin()">MODO ADMIN</button>
         <nav class="categorias-nav">
             <button onclick="document.getElementById('entradas').scrollIntoView({behavior: 'smooth'})">ENTRADAS</button>
             <button onclick="document.getElementById('comidas').scrollIntoView({behavior: 'smooth'})">COMIDAS</button>
@@ -47,18 +44,18 @@
                 <select id="add-categoria">
                     <option value="entradas">Entradas</option>
                     <option value="comidas">Comidas</option>
-                    <option value="sin-alcohol">Bebidas</option>
+                    <option value="bebidas">Bebidas</option>
                 </select>
-                <div class="file-upload">
-                    <label for="add-imagen">📸 Galería</label>
+                <div class="file-box">
+                    <label for="add-imagen">📸 Seleccionar Galería</label>
                     <input type="file" id="add-imagen" accept="image/*">
                 </div>
-                <button class="btn-primary" id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR</button>
+                <button class="btn-pub" id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR</button>
             </div>
 
             <div class="glass-card carrito-container">
                 <h3>Tu Pedido</h3>
-                <div id="lista-carrito" class="lista-mini"></div>
+                <div id="lista-carrito"></div>
                 <div class="carrito-footer">
                     <div class="total-row">Total: <span id="total-precio">$0</span></div>
                     <input type="number" id="input-mesa" placeholder="Mesa N°">
