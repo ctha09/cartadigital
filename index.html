@@ -10,37 +10,39 @@
 <body>
 
     <header>
-        <h1>CULINARIA</h1>
-        <button id="btn-admin-toggle" onclick="toggleAdmin()">MODO ADMIN</button>
+        <div class="logo-container">
+            <h1>CULINARIA</h1>
+            <button id="btn-admin-toggle" onclick="toggleAdmin()">MODO ADMIN</button>
+        </div>
     </header>
 
-    <section id="form-nuevo-producto" style="display:none; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 10px;">
-        <h2 style="color: #d4af37;">Nuevo Producto</h2>
-        <input type="text" id="add-nombre" placeholder="Nombre del plato">
-        <input type="number" id="add-precio" placeholder="Precio">
-        
-        <select id="add-categoria">
-            <option value="entradas">Entradas</option>
-            <option value="comidas">Comidas</option>
-            <option value="sin-alcohol">Sin Alcohol</option>
-            <option value="con-alcohol">Con Alcohol</option>
-        </select>
+    <section id="form-nuevo-producto" class="admin-panel" style="display:none;">
+        <div class="form-card">
+            <h2>Nuevo Producto</h2>
+            <input type="text" id="add-nombre" placeholder="Nombre del plato">
+            <input type="number" id="add-precio" placeholder="Precio ($)">
+            
+            <select id="add-categoria">
+                <option value="entradas">Entradas</option>
+                <option value="comidas">Comidas</option>
+                <option value="sin-alcohol">Sin Alcohol</option>
+                <option value="con-alcohol">Con Alcohol</option>
+            </select>
 
-        <div style="margin: 15px 0;">
-            <label style="display: block; margin-bottom: 8px; color: #d4af37; font-size: 0.9em;">
-                📷 Seleccionar foto del plato:
-            </label>
-            <input type="file" id="add-imagen" accept="image/*" style="color: white; font-size: 0.8em;">
+            <div class="file-input-container">
+                <label for="add-imagen">📸 Seleccionar de Galería</label>
+                <input type="file" id="add-imagen" accept="image/*">
+            </div>
+
+            <button id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR EN MENÚ</button>
+            <p id="upload-status" style="display:none; color: gold; font-size: 0.8em; margin-top: 10px;">Subiendo... por favor espera.</p>
         </div>
-
-        <button onclick="guardarNuevoProducto()" style="width:100%; background:#d4af37; color:black; font-weight:bold; padding: 12px; border: none; border-radius: 8px; cursor: pointer;">PUBLICAR EN MENÚ</button>
     </section>
 
     <nav class="categorias-nav">
-        <button onclick="document.getElementById('entradas').scrollIntoView()">ENTRADAS</button>
-        <button onclick="document.getElementById('comidas').scrollIntoView()">COMIDAS</button>
-        <button onclick="document.getElementById('sin-alcohol').scrollIntoView()">SIN ALCOHOL</button>
-        <button onclick="document.getElementById('con-alcohol').scrollIntoView()">CON ALCOHOL</button>
+        <button onclick="document.getElementById('entradas').scrollIntoView({behavior: 'smooth'})">ENTRADAS</button>
+        <button onclick="document.getElementById('comidas').scrollIntoView({behavior: 'smooth'})">COMIDAS</button>
+        <button onclick="document.getElementById('sin-alcohol').scrollIntoView({behavior: 'smooth'})">BEBIDAS</button>
     </nav>
 
     <main id="menu-container">
@@ -65,10 +67,11 @@
     <div id="carrito-flotante">
         <h3>Tu Pedido</h3>
         <div id="lista-carrito"></div>
-        <hr>
-        <div class="total">Total: <span id="total-precio">$0</span></div>
-        <input type="text" id="input-mesa" placeholder="N° de Mesa">
-        <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
+        <div class="carrito-footer">
+            <div class="total">Total: <span id="total-precio">$0</span></div>
+            <input type="number" id="input-mesa" placeholder="Mesa N°">
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
