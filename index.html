@@ -8,62 +8,66 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="background-overlay"></div>
 
     <header>
-        <h1 class="logo">CULINARIA</h1>
-        <button id="btn-admin-toggle" class="btn-admin" onclick="toggleAdmin()">MODO ADMIN</button>
-        <nav class="categorias-nav">
-            <button onclick="document.getElementById('entradas').scrollIntoView({behavior: 'smooth'})">ENTRADAS</button>
-            <button onclick="document.getElementById('comidas').scrollIntoView({behavior: 'smooth'})">COMIDAS</button>
-            <button onclick="document.getElementById('bebidas').scrollIntoView({behavior: 'smooth'})">BEBIDAS</button>
-        </nav>
+        <h1>CULINARIA</h1>
+        <button id="btn-admin-toggle" onclick="toggleAdmin()">MODO ADMIN</button>
     </header>
 
-    <main class="main-layout">
-        <section class="menu-container">
-            <div id="entradas" class="categoria-section">
-                <h2 class="cat-title">Entradas</h2>
-                <div class="lista"></div>
-            </div>
-            <div id="comidas" class="categoria-section">
-                <h2 class="cat-title">Comidas</h2>
-                <div class="lista"></div>
-            </div>
-            <div id="bebidas" class="categoria-section">
-                <h2 class="cat-title">Bebidas</h2>
-                <div class="lista"></div>
-            </div>
+    <section id="form-nuevo-producto" style="display:none; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 15px; margin: 10px;">
+        <h2 style="color: #d4af37;">Nuevo Producto</h2>
+        <input type="text" id="add-nombre" placeholder="Nombre del plato">
+        <input type="number" id="add-precio" placeholder="Precio">
+        
+        <select id="add-categoria">
+            <option value="entradas">Entradas</option>
+            <option value="comidas">Comidas</option>
+            <option value="sin-alcohol">Sin Alcohol</option>
+            <option value="con-alcohol">Con Alcohol</option>
+        </select>
+
+        <div style="margin: 10px 0;">
+            <label style="display: block; margin-bottom: 5px; font-size: 0.8em; color: #aaa;">Subir imagen (Galería):</label>
+            <input type="file" id="add-imagen" accept="image/*" style="color: white;">
+        </div>
+
+        <button onclick="guardarNuevoProducto()" style="width:100%; background:#d4af37; color:black; font-weight:bold; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">PUBLICAR EN MENÚ</button>
+    </section>
+
+    <nav class="categorias-nav">
+        <button onclick="document.getElementById('entradas').scrollIntoView()">ENTRADAS</button>
+        <button onclick="document.getElementById('comidas').scrollIntoView()">COMIDAS</button>
+        <button onclick="document.getElementById('sin-alcohol').scrollIntoView()">SIN ALCOHOL</button>
+        <button onclick="document.getElementById('con-alcohol').scrollIntoView()">CON ALCOHOL</button>
+    </nav>
+
+    <main id="menu-container">
+        <section id="entradas" class="categoria-section">
+            <h2>Entradas</h2>
+            <div class="lista"></div>
         </section>
-
-        <aside class="sidebar">
-            <div id="form-nuevo-producto" class="glass-card admin-panel" style="display:none;">
-                <h3>Nuevo Producto</h3>
-                <input type="text" id="add-nombre" placeholder="Nombre del plato">
-                <input type="number" id="add-precio" placeholder="Precio ($)">
-                <select id="add-categoria">
-                    <option value="entradas">Entradas</option>
-                    <option value="comidas">Comidas</option>
-                    <option value="bebidas">Bebidas</option>
-                </select>
-                <div class="file-box">
-                    <label for="add-imagen">📸 Seleccionar Galería</label>
-                    <input type="file" id="add-imagen" accept="image/*">
-                </div>
-                <button class="btn-pub" id="btn-publicar" onclick="guardarNuevoProducto()">PUBLICAR</button>
-            </div>
-
-            <div class="glass-card carrito-container">
-                <h3>Tu Pedido</h3>
-                <div id="lista-carrito"></div>
-                <div class="carrito-footer">
-                    <div class="total-row">Total: <span id="total-precio">$0</span></div>
-                    <input type="number" id="input-mesa" placeholder="Mesa N°">
-                    <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
-                </div>
-            </div>
-        </aside>
+        <section id="comidas" class="categoria-section">
+            <h2>Comidas</h2>
+            <div class="lista"></div>
+        </section>
+        <section id="sin-alcohol" class="categoria-section">
+            <h2>Sin Alcohol</h2>
+            <div class="lista"></div>
+        </section>
+        <section id="con-alcohol" class="categoria-section">
+            <h2>Con Alcohol</h2>
+            <div class="lista"></div>
+        </section>
     </main>
+
+    <div id="carrito-flotante">
+        <h3>Tu Pedido</h3>
+        <div id="lista-carrito"></div>
+        <hr>
+        <div class="total">Total: <span id="total-precio">$0</span></div>
+        <input type="text" id="input-mesa" placeholder="N° de Mesa">
+        <button class="btn-whatsapp" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP</button>
+    </div>
 
     <script src="script.js"></script>
 </body>
