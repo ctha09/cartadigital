@@ -1,86 +1,73 @@
-:root {
-    --gold: #d4af37;
-    --glass: rgba(255, 255, 255, 0.05);
-    --border: rgba(255, 255, 255, 0.1);
-}
-
 body {
-    background: #0a0a0a;
+    background: #000;
     color: white;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
-    overflow-x: hidden;
+    background-image: radial-gradient(circle at top right, #1a1a1a, #000);
+    min-height: 100vh;
 }
 
 .main-layout {
     display: grid;
     grid-template-columns: 1fr 350px;
-    gap: 20px;
+    gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .glass-card {
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 25px;
+    position: sticky;
+    top: 20px;
 }
 
 .menu-item {
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
     display: flex;
     padding: 15px;
     margin-bottom: 15px;
     align-items: center;
-    transition: 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .item-img {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: 15px;
     margin-right: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 .cat-title {
-    color: var(--gold);
-    border-bottom: 1px solid var(--gold);
-    padding-bottom: 5px;
-    margin-top: 30px;
+    color: #d4af37;
+    font-size: 1.8rem;
+    border-left: 4px solid #d4af37;
+    padding-left: 15px;
+    margin: 40px 0 20px;
 }
-
-.btn-primary, .btn-whatsapp {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-primary { background: var(--gold); color: black; }
-.btn-whatsapp { background: #25d366; color: white; margin-top: 10px; }
 
 input, select {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 12px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.2);
     color: white;
-    border-radius: 8px;
+    border-radius: 10px;
     box-sizing: border-box;
 }
 
-/* Responsive para Celulares */
+.btn-pub { background: #d4af37; color: black; font-weight: bold; width: 100%; padding: 12px; border: none; border-radius: 10px; cursor: pointer; }
+.btn-whatsapp { background: #25d366; width: 100%; padding: 15px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
 @media (max-width: 900px) {
     .main-layout { grid-template-columns: 1fr; }
-    .sidebar { order: -1; } /* El carrito/admin sube arriba en el celu */
+    .sidebar { order: -1; }
 }
