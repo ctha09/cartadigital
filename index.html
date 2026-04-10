@@ -5,14 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Culinaria | Menú Digital</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
 <div class="container">
     <header>
+        <div style="text-align: right;">
+            <button id="btn-admin-toggle" onclick="toggleAdmin()" class="btn-admin-access">MODO ADMIN</button>
+        </div>
         <h1>Culinaria</h1>
         <p class="subtitle">EXPERIENCIA ARTESANAL</p>
     </header>
+
+    <div id="form-nuevo-producto" class="admin-form-box" style="display:none;">
+        <h3>Nuevo Producto</h3>
+        <input type="text" id="add-nombre" placeholder="Nombre del plato">
+        <input type="number" id="add-precio" placeholder="Precio (ej: 1500)">
+        <select id="add-categoria">
+            <option value="entradas">Entradas</option>
+            <option value="comidas">Comidas</option>
+            <option value="sin-alcohol">Sin Alcohol</option>
+            <option value="con-alcohol">Con Alcohol</option>
+        </select>
+        <input type="text" id="add-imagen" placeholder="URL de la imagen">
+        <button onclick="guardarNuevoProducto()" class="btn-save-admin">PUBLICAR EN MENÚ</button>
+    </div>
 
     <nav class="nav-sectors">
         <a href="#entradas" class="nav-item">ENTRADAS</a>
@@ -21,68 +39,25 @@
         <a href="#con-alcohol" class="nav-item">CON ALCOHOL</a>
     </nav>
 
-    <section id="entradas">
-        <div class="category-title">Entradas</div>
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1506280754576-f6fa8a873550?q=80&w=200" class="item-img" alt="Bruschettas" loading="lazy">
-            <div class="item-content">
-                <div class="item-info"><h3>Bruschettas Salmón</h3><span class="price">$1.200</span></div>
-                <button class="btn-order" onpointerdown="agregarAlCarrito('Bruschetta Salmón', 1200)">AGREGAR</button>
-            </div>
-        </div>
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=200" class="item-img" alt="Empanadas" loading="lazy">
-            <div class="item-content">
-                <div class="item-info"><h3>Empanadas Criollas</h3><span class="price">$850</span></div>
-                <button class="btn-order" onpointerdown="agregarAlCarrito('Empanadas Criollas', 850)">AGREGAR</button>
-            </div>
-        </div>
-    </section>
-
-    <section id="comidas">
-        <div class="category-title">Comidas</div>
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=200" class="item-img" alt="Burger" loading="lazy">
-            <div class="item-content">
-                <div class="item-info"><h3>Burger Premium</h3><span class="price">$2.100</span></div>
-                <button class="btn-order" onpointerdown="agregarAlCarrito('Burger Premium', 2100)">AGREGAR</button>
-            </div>
-        </div>
-    </section>
-
-    <section id="sin-alcohol">
-        <div class="category-title">Sin Alcohol</div>
-        <div class="menu-item">
-            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200" class="item-img" alt="Limonada" loading="lazy">
-            <div class="item-content">
-                <div class="item-info"><h3>Limonada Menta</h3><span class="price">$650</span></div>
-                <button class="btn-order" onpointerdown="agregarAlCarrito('Limonada Menta', 650)">AGREGAR</button>
-            </div>
-        </div>
-    </section>
+    <div id="menu-dinamico">
+        <section id="entradas"><div class="category-title">Entradas</div><div class="lista"></div></section>
+        <section id="comidas"><div class="category-title">Comidas</div><div class="lista"></div></section>
+        <section id="sin-alcohol"><div class="category-title">Sin Alcohol</div><div class="lista"></div></section>
+        <section id="con-alcohol"><div class="category-title">Con Alcohol</div><div class="lista"></div></section>
+    </div>
 
     <section id="carrito" class="cart-container">
         <div class="category-title">Tu Pedido</div>
-        <div id="lista-carrito">
-            <p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>
-        </div>
-        
-        <div class="cart-total">
-            <span>TOTAL:</span>
-            <span id="total-precio">$0</span>
-        </div>
-
+        <div id="lista-carrito"><p style="text-align: center; opacity: 0.5;">El carrito está vacío</p></div>
+        <div class="cart-total"><span>TOTAL:</span><span id="total-precio">$0</span></div>
         <div class="input-mesa">
             <label>N° DE MESA:</label>
-            <input type="number" id="input-mesa" placeholder="Ej: 5" pattern="\[0-9]*" inputmode="numeric">
+            <input type="number" id="input-mesa" placeholder="Ej: 5" inputmode="numeric">
         </div>
-
-        <button class="btn-finalizar" onpointerdown="enviarWhatsApp()">FINALIZAR PEDIDO</button>
+        <button class="btn-finalizar" onclick="enviarWhatsApp()">FINALIZAR PEDIDO</button>
     </section>
 
-    <footer>
-        <p class="signature">Programada por: Carlos Thomas Acosta</p>
-    </footer>
+    <footer><p class="signature">Programada por: Carlos Thomas Acosta</p></footer>
 </div>
 
 <script src="script.js"></script>
