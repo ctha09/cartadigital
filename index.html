@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AIRES Estoril | Menú Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Playfair+Display:wght@600&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -12,11 +13,14 @@
 <div class="container">
     <header>
         <div class="brand-container">
-            <div class="logo-aires"><span class="letter-a">A</span>IRES</div>
+            <div class="logo-aires">
+                <span class="letter-a"></span>I<span class="letter-r">R</span>ES
+            </div>
             <div class="logo-estoril">ESTORIL</div>
+            <p class="subtitle">EXPERIENCIA ARTESANAL</p>
+            
+            <button id="btn-admin-view" onclick="toggleAdmin()">MANTENIMIENTO</button>
         </div>
-        <p class="subtitle">EXPERIENCIA ARTESANAL</p>
-        <button id="btn-admin-view" onclick="toggleAdmin()">MANTENIMIENTO</button>
     </header>
 
     <nav class="nav-sectors">
@@ -38,29 +42,53 @@
                 <option value="con-alcohol">Con Alcohol</option>
             </select>
             
-            <label for="add-imagen" class="btn-file-label">📸 Seleccionar de la Galería</label>
-            <input type="file" id="add-imagen" accept="image/*" style="display: none;" onchange="actualizarNombreArchivo(this)">
-            <span id="file-name-display">Sin archivo seleccionado</span>
+            <label for="add-imagen" class="btn-file-label" style="border: 1px dashed var(--gold); color: var(--gold); padding: 15px; display: block; text-align: center; border-radius: 6px; margin-top: 10px; cursor: pointer;">
+                📸 Seleccionar de la Galería
+            </label>
+            <input type="file" id="add-imagen" accept="image/*" style="display: none;" onchange="document.getElementById('file-name-info').innerText = this.files[0].name">
+            <p id="file-name-info" style="font-size: 0.7rem; text-align: center; margin-top: 5px; opacity: 0.6;">Sin archivo seleccionado</p>
         </div>
+        
         <button class="btn-finalizar" onclick="guardarNuevoProducto()">SUBIR AL MENÚ</button>
         <button onclick="cerrarAdmin()" class="btn-cerrar-admin">[ Cerrar Panel ]</button>
     </section>
 
     <main id="menu-dinamico">
-        <section id="entradas"><div class="category-title">Entradas</div><div class="lista"></div></section>
-        <section id="comidas"><div class="category-title">Comidas</div><div class="lista"></div></section>
-        <section id="sin-alcohol"><div class="category-title">Sin Alcohol</div><div class="lista"></div></section>
-        <section id="con-alcohol"><div class="category-title">Con Alcohol</div><div class="lista"></div></section>
+        <section id="entradas">
+            <div class="category-title">Entradas</div>
+            <div class="lista"></div>
+        </section>
+        
+        <section id="comidas">
+            <div class="category-title">Comidas</div>
+            <div class="lista"></div>
+        </section>
+        
+        <section id="sin-alcohol">
+            <div class="category-title">Sin Alcohol</div>
+            <div class="lista"></div>
+        </section>
+        
+        <section id="con-alcohol">
+            <div class="category-title">Con Alcohol</div>
+            <div class="lista"></div>
+        </section>
     </main>
 
     <section id="carrito" class="cart-container">
         <div class="category-title">Tu Pedido</div>
-        <div id="lista-carrito"></div>
-        <div class="cart-total"><span>TOTAL:</span><span id="total-precio">$0</span></div>
+        <div id="lista-carrito">
+            </div>
+        <div class="cart-total">
+            <span>TOTAL:</span>
+            <span id="total-precio">$0</span>
+        </div>
+        
         <div class="input-mesa">
-            <label>N° DE MESA:</label>
+            <label style="font-size: 0.8rem; letter-spacing: 1px;">N° DE MESA:</label>
             <input type="number" id="input-mesa" placeholder="Ej: 5">
         </div>
+        
         <button class="btn-finalizar" onclick="enviarWhatsApp()">FINALIZAR PEDIDO</button>
     </section>
 
