@@ -25,7 +25,7 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// 2. CARGAR MENÚ DESDE SUPABASE
+// 2. CARGAR MENÚ CON NUEVAS SECCIONES
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
         .from('productos') 
@@ -40,15 +40,23 @@ async function cargarMenu() {
     const menuDinamico = document.getElementById('menu-dinamico');
     menuDinamico.innerHTML = "";
     
-    const categorias = ["entradas", "comidas", "sin-alcohol", "con-alcohol"];
+    // LISTA DE CATEGORÍAS ACTUALIZADA
+    const categorias = [
+        "entradas", 
+        "platos-de-autor", 
+        "comidas", 
+        "acompañamientos", 
+        "postres", 
+        "sin-alcohol", 
+        "con-alcohol"
+    ];
     
     categorias.forEach(cat => {
         const items = productos.filter(p => p.categoria === cat);
         if (items.length > 0) {
-            let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div><div class="lista-items">`;
+            let html = `<section id="${cat}"><div class="category-title">${cat.replace(/-/g, " ").toUpperCase()}</div><div class="lista-items">`;
             items.forEach(p => {
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
-                // Convertimos el precio a número y formateamos a 2 decimales
                 const precioFormateado = parseFloat(p.precio).toFixed(2);
 
                 html += `
@@ -70,7 +78,7 @@ async function cargarMenu() {
     });
 }
 
-// 3. SUBIR NUEVO PRODUCTO (CON SOPORTE PARA DECIMALES)
+// 3. SUBIR NUEVO PRODUCTO
 async function guardarNuevoProducto() {
     const nombre = document.getElementById('add-nombre').value;
     const precioInput = document.getElementById('add-precio').value; 
@@ -86,7 +94,6 @@ async function guardarNuevoProducto() {
         const bucketName = 'imagenes'; 
         const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
 
-        // Subida de imagen al Storage
         const { data: imgData, error: imgError } = await _supabase.storage
             .from(bucketName)
             .upload(fileName, imagenFile);
@@ -98,11 +105,8 @@ async function guardarNuevoProducto() {
             .getPublicUrl(fileName);
 
         const imagen_url = publicUrlData.publicUrl;
-
-        // Convertimos el texto del input a número decimal de forma segura
         const precioDecimal = parseFloat(precioInput.replace(',', '.'));
 
-        // Insertar en la tabla 'productos'
         const { error: insertError } = await _supabase
             .from('productos')
             .insert([{ 
@@ -112,7 +116,7 @@ async function guardarNuevoProducto() {
                 imagen_url: imagen_url 
             }]);
 
-        if (insertError) throw new Error("Asegúrate de cambiar la columna precio a 'float8' en Supabase: " + insertError.message);
+        if (insertError) throw insertError;
 
         alert("¡Producto subido con éxito!");
         document.getElementById('add-nombre').value = "";
@@ -120,12 +124,11 @@ async function guardarNuevoProducto() {
         cargarMenu();
 
     } catch (err) {
-        console.error("Error al subir:", err);
         alert("Error: " + err.message);
     }
 }
 
-// 4. GESTIÓN DEL CARRITO
+// 4. CARRITO
 function agregarAlCarrito(nombre, precio) {
     carrito.push({ nombre, precio: parseFloat(precio) });
     actualizarCarritoUI();
@@ -156,25 +159,20 @@ function actualizarCarritoUI() {
     totalElem.innerText = `€${total.toFixed(2)}`;
 }
 
-// 5. ELIMINAR DEL MENÚ (ADMIN)
+// 5. ELIMINAR Y WHATSAPP
 async function eliminarProducto(id) {
-    if(!confirm("¿Deseas eliminar este plato permanentemente?")) return;
-    const { error } = await _supabase.from('productos').delete().eq('id', id);
-    if (error) alert("Error al borrar.");
-    else cargarMenu();
+    if(!confirm("¿Eliminar plato?")) return;
+    await _supabase.from('productos').delete().eq('id', id);
+    cargarMenu();
 }
 
-// 6. WHATSAPP
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
     if(!mesa || carrito.length === 0) return alert("Ingresa n° de mesa y productos");
-    
     let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
     carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio.toFixed(2)}\n`);
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
-    
     window.open(`https://wa.me/34000000000?text=${encodeURIComponent(mensaje)}`);
 }
 
-// INICIO
 window.onload = cargarMenu;
