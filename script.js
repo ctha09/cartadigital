@@ -14,8 +14,9 @@ function actualizarNombreArchivo(input) {
 }
 
 async function cargarMenu() {
+    // CORREGIDO: 'productos' en minúsculas
     const { data: productos, error } = await _supabase
-        .from('Productos') 
+        .from('productos') 
         .select('*')
         .order('nombre', { ascending: true });
 
@@ -67,7 +68,8 @@ async function guardarNuevoProducto() {
 
         const { data: urlData } = _supabase.storage.from('imagenes-menu').getPublicUrl(nombreArchivo);
 
-        const { error: dbError } = await _supabase.from('Productos').insert([{ 
+        // CORREGIDO: 'productos' en minúsculas
+        const { error: dbError } = await _supabase.from('productos').insert([{ 
             nombre, precio: parseInt(precio), categoria, imagen: urlData.publicUrl 
         }]);
 
@@ -94,11 +96,13 @@ function cerrarAdmin() {
 
 async function eliminarProducto(id) {
     if (confirm("¿Borrar?")) {
-        await _supabase.from('Productos').delete().eq('id', id);
+        // CORREGIDO: 'productos' en minúsculas
+        await _supabase.from('productos').delete().eq('id', id);
         cargarMenu();
     }
 }
 
+// ... Resto de funciones del carrito y WhatsApp (sin cambios)
 function agregarAlCarrito(prod, prec) {
     carrito.push({ nombre: prod, precio: prec });
     actualizarVistaCarrito();
