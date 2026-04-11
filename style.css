@@ -1,20 +1,14 @@
 /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
 :root {
     --gold: #c5a059;
-    --gold-gradient: linear-gradient(135deg, #c5a059 0%, #f1d592 50%, #c5a059 100%);
+    --gold-gradient: linear-gradient(180deg, #f1d592 0%, #c5a059 50%, #8a6d3b 100%);
     --bg-dark: #0a0a0a;
     --card-bg: rgba(30, 30, 30, 0.7);
     --text-main: #e0d8cc;
 }
 
-* { 
-    box-sizing: border-box; 
-    -webkit-tap-highlight-color: transparent; 
-}
-
-html { 
-    scroll-behavior: smooth; 
-}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
 
 body {
     font-family: 'Poppins', sans-serif;
@@ -27,7 +21,6 @@ body {
     justify-content: center;
 }
 
-/* --- CONTENEDOR PRINCIPAL --- */
 .container {
     width: 100%;
     max-width: 600px;
@@ -36,54 +29,59 @@ body {
     padding: 30px 15px;
 }
 
-/* --- HEADER Y LOGO AIRES ESTORIL --- */
+/* --- LOGO TÉCNICO AIRES ESTORIL --- */
 header {
     text-align: center;
     margin-bottom: 25px;
     border-bottom: 2px double var(--gold);
-    padding-bottom: 20px;
+    padding-bottom: 25px;
 }
 
 .brand-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
 }
 
-/* Recreación de la "A" del logo mediante CSS */
 .logo-aires {
+    display: flex;
+    align-items: center;
     font-family: 'Inter', sans-serif; 
-    font-size: 3.2rem;
+    font-size: 3.5rem;
     font-weight: 800;
-    letter-spacing: 6px;
+    line-height: 1;
+    letter-spacing: 2px;
     background: var(--gold-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    display: flex;
-    align-items: center;
-    line-height: 1;
     margin: 0;
 }
 
+/* Letra A tipo punta de flecha */
 .letter-a {
     display: inline-block;
-    position: relative;
-    width: 0.8em;
-    height: 1em;
+    width: 0.82em;
+    height: 0.85em;
     background: var(--gold-gradient);
-    /* Esta máscara crea la forma de flecha/punta de la A de AIRES */
-    clip-path: polygon(50% 15%, 0% 100%, 25% 100%, 50% 45%, 75% 100%, 100% 100%);
+    clip-path: polygon(50% 0%, 0% 100%, 22% 100%, 50% 35%, 78% 100%, 100% 100%);
     margin-right: 2px;
 }
 
+/* Letra R con corte técnico */
+.letter-r {
+    display: inline-block;
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    padding-right: 1px;
+}
+
 .logo-estoril {
-    font-size: 0.85rem;
-    letter-spacing: 6px;
+    font-size: 0.9rem;
+    letter-spacing: 8px;
     color: var(--gold);
-    font-weight: 400;
     text-transform: uppercase;
     margin-top: 5px;
+    font-weight: 400;
 }
 
 .subtitle {
@@ -91,13 +89,12 @@ header {
     letter-spacing: 3px; 
     opacity: 0.6;
     margin-top: 10px;
-    text-transform: uppercase;
 }
 
-/* --- BOTÓN MANTENIMIENTO ADAPTADO --- */
+/* --- BOTÓN MANTENIMIENTO --- */
 #btn-admin-view {
     background: none;
-    border: 1px solid var(--gold);
+    border: 1px solid rgba(197, 160, 89, 0.3);
     color: var(--gold);
     padding: 8px 20px;
     border-radius: 4px;
@@ -106,19 +103,16 @@ header {
     letter-spacing: 2px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease;
     margin-top: 15px;
-    display: inline-block;
-    opacity: 0.8;
+    transition: 0.3s ease;
 }
 
 #btn-admin-view:hover {
     background: rgba(197, 160, 89, 0.1);
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
+    border-color: var(--gold);
 }
 
-/* --- NAVEGACIÓN --- */
+/* --- NAVEGACIÓN Y MENÚ (TU FORMATO ORIGINAL) --- */
 .nav-sectors {
     display: flex;
     overflow-x: auto;
@@ -145,7 +139,6 @@ header {
     white-space: nowrap;
 }
 
-/* --- CUERPO DEL MENÚ --- */
 .category-title {
     font-family: 'Playfair Display', serif;
     color: var(--gold);
@@ -184,7 +177,6 @@ header {
     background: transparent; border: 1px solid var(--gold); color: var(--gold);
     padding: 8px 16px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;
     align-self: flex-end; font-weight: 600; text-transform: uppercase;
-    touch-action: manipulation;
 }
 
 /* --- CARRITO Y FORMULARIOS --- */
@@ -196,29 +188,6 @@ header {
     margin-top: 50px;
 }
 
-.item-carrito {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.cart-total {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0;
-    color: var(--gold);
-    font-size: 1.3rem;
-    font-weight: 600;
-}
-
-.input-mesa {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
 .input-mesa input, .input-mesa select {
     background: #111 !important; 
     border: 1px solid var(--gold) !important;
@@ -226,57 +195,15 @@ header {
     padding: 15px; 
     border-radius: 6px; 
     outline: none;
-    -webkit-appearance: none;
-    appearance: none;
     font-size: 1rem;
 }
 
 .btn-finalizar {
-    width: 100%; 
-    background-color: var(--gold) !important; 
-    color: #000 !important;
-    border: none !important; 
-    padding: 18px; 
-    border-radius: 6px;
-    font-weight: 700; 
-    cursor: pointer;
-    text-transform: uppercase;
-    -webkit-appearance: none;
-    appearance: none;
+    width: 100%; background-color: var(--gold) !important; 
+    color: #000 !important; border: none !important; 
+    padding: 18px; border-radius: 6px; font-weight: 700; 
+    text-transform: uppercase; cursor: pointer;
 }
 
-/* --- PANEL ADMIN / MANTENIMIENTO --- */
-#form-admin {
-    background: rgba(20, 20, 20, 0.95);
-    border: 1px solid var(--gold);
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-}
-
-.btn-cerrar-admin {
-    background: none;
-    border: none;
-    color: var(--text-main);
-    width: 100%;
-    margin-top: 15px;
-    opacity: 0.5;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-
-/* --- FOOTER --- */
-footer { 
-    text-align: center; 
-    margin-top: 60px; 
-    padding: 20px; 
-    border-top: 1px solid rgba(197, 160, 89, 0.2); 
-}
-
-.signature { 
-    font-size: 0.65rem; 
-    color: var(--gold); 
-    text-transform: uppercase; 
-    letter-spacing: 2px; 
-    opacity: 0.8; 
-}
+footer { text-align: center; margin-top: 60px; padding: 20px; border-top: 1px solid rgba(197, 160, 89, 0.2); }
+.signature { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
