@@ -1,4 +1,4 @@
-// CONFIGURACIÓN SUPABASE
+// CONFIGURACIÓN DE CONEXIÓN
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1aHRyYnp2aW9kY2xpb3F0bWNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ2NTcsImV4cCI6MjA5MTQyMDY1N30.pROjzOh1pN52aDWDJCVWZ4TC6Nqu-cRidk_vAqckAxA"; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -6,13 +6,14 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let carrito = [];
 let isAdmin = false;
 
-// LOGIN DE ADMINISTRADOR
+// 1. GESTIÓN DE ACCESO (MANTENIMIENTO)
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
         document.getElementById('form-admin').style.display = 'block';
         cargarMenu();
+        alert("Acceso concedido");
     } else {
         alert("Clave incorrecta.");
     }
@@ -24,7 +25,7 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// CARGAR MENÚ
+// 2. CARGAR MENÚ DESDE SUPABASE
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
         .from('productos') 
@@ -32,7 +33,7 @@ async function cargarMenu() {
         .order('nombre', { ascending: true });
 
     if (error) {
-        console.error("Error al cargar:", error);
+        console.error("Error al cargar menú:", error);
         return;
     }
 
@@ -66,9 +67,8 @@ async function cargarMenu() {
     });
 }
 
-// --- FUNCIÓN CRÍTICA: GUARDAR NUEVO PRODUCTO ---
+// 3. SUBIR NUEVO PRODUCTO (ADMIN)
 async function guardarNuevoProducto() {
-    console.log("Iniciando subida...");
     const nombre = document.getElementById('add-nombre').value;
     const precio = document.getElementById('add-precio').value;
     const categoria = document.getElementById('add-categoria').value;
@@ -80,22 +80,24 @@ async function guardarNuevoProducto() {
     }
 
     try {
-        // 1. Subir imagen al Bucket (Asegúrate de que se llame 'imagenes')
+        const bucketName = 'imagenes'; 
         const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
+
+        // Subir imagen
         const { data: imgData, error: imgError } = await _supabase.storage
-            .from('imagenes') // <--- VERIFICA QUE ESTE NOMBRE SEA IGUAL EN TU SUPABASE
+            .from(bucketName)
             .upload(fileName, imagenFile);
 
         if (imgError) throw imgError;
 
-        // 2. Obtener URL pública
+        // URL Pública
         const { data: publicUrlData } = _supabase.storage
-            .from('imagenes')
+            .from(bucketName)
             .getPublicUrl(fileName);
 
         const imagen_url = publicUrlData.publicUrl;
 
-        // 3. Insertar en la tabla 'productos'
+        // Insertar en Tabla
         const { error: insertError } = await _supabase
             .from('productos')
             .insert([{ 
@@ -108,18 +110,17 @@ async function guardarNuevoProducto() {
         if (insertError) throw insertError;
 
         alert("¡Producto subido con éxito!");
-        // Limpiar campos
         document.getElementById('add-nombre').value = "";
         document.getElementById('add-precio').value = "";
         cargarMenu();
 
     } catch (err) {
-        console.error("Error completo:", err);
-        alert("Error al subir: " + (err.message || "Consulta la consola (F12)"));
+        console.error("Error al subir:", err);
+        alert("Error: " + err.message);
     }
 }
 
-// GESTIÓN DEL CARRITO
+// 4. GESTIÓN DEL CARRITO
 function agregarAlCarrito(nombre, precio) {
     carrito.push({ nombre, precio });
     actualizarCarritoUI();
@@ -139,31 +140,37 @@ function actualizarCarritoUI() {
     carrito.forEach((item, index) => {
         total += item.precio;
         lista.innerHTML += `
-            <div class="item-carrito" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <div class="item-carrito" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
                 <div style="display:flex; flex-direction:column;">
-                    <span style="font-size: 0.9rem;">${item.nombre}</span>
-                    <span style="color: var(--gold); font-size: 0.8rem;">€${item.precio}</span>
+                    <span style="font-size: 0.95rem; font-weight: 600;">${item.nombre}</span>
+                    <span style="color: var(--gold); font-size: 0.85rem;">€${item.precio}</span>
                 </div>
-                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:2px 8px; font-size:0.6rem; cursor:pointer;">Quitar</button>
+                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:4px 10px; font-size:0.65rem; cursor:pointer; text-transform:uppercase;">Quitar</button>
             </div>`;
     });
     totalElem.innerText = `€${total}`;
 }
 
+// 5. ELIMINAR DEL MENÚ (ADMIN)
 async function eliminarProducto(id) {
-    if(!confirm("¿Eliminar permanentemente?")) return;
+    if(!confirm("¿Eliminar este plato del menú permanentemente?")) return;
     const { error } = await _supabase.from('productos').delete().eq('id', id);
-    if (error) alert("Error al borrar");
+    if (error) alert("Error al borrar de la base de datos.");
     else cargarMenu();
 }
 
+// 6. WHATSAPP
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
     if(!mesa || carrito.length === 0) return alert("Ingresa n° de mesa y productos");
+    
     let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
     carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio}\n`);
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
-    window.open(`https://wa.me/TU_NUMERO_AQUI?text=${encodeURIComponent(mensaje)}`);
+    
+    // Cambia el número 34000000000 por el tuyo real
+    window.open(`https://wa.me/34000000000?text=${encodeURIComponent(mensaje)}`);
 }
 
+// INICIO AUTOMÁTICO
 window.onload = cargarMenu;
