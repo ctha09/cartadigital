@@ -28,52 +28,39 @@
         <div class="input-mesa">
             <input type="text" id="add-nombre" placeholder="Nombre del plato">
             <input type="number" id="add-precio" placeholder="Precio">
-            <select id="add-categoria" style="background:#111; color:white; padding:15px; border:1px solid var(--gold); border-radius:6px; margin-bottom:10px; width:100%; font-family: 'Poppins';">
+            <select id="add-categoria">
                 <option value="entradas">Entradas</option>
                 <option value="comidas">Comidas</option>
                 <option value="sin-alcohol">Sin Alcohol</option>
                 <option value="con-alcohol">Con Alcohol</option>
             </select>
-            <label style="font-size: 0.8rem; color: var(--gold); margin-bottom: 5px; display: block;">Seleccionar foto de galería:</label>
-            <input type="file" id="add-imagen" accept="image/*" style="border:none; padding:10px 0;">
+            
+            <label for="add-imagen" style="background: rgba(197, 160, 89, 0.1); border: 1px dashed var(--gold); color: var(--gold); padding: 15px; border-radius: 6px; text-align: center; cursor: pointer; font-size: 0.9rem; margin-bottom: 5px; display: block;">
+                📸 Seleccionar de la Galería
+            </label>
+            <input type="file" id="add-imagen" accept="image/*" style="display: none;" onchange="actualizarNombreArchivo(this)">
+            <span id="file-name-display" style="font-size: 0.7rem; color: var(--gold); text-align: center; display: block; margin-bottom: 15px; opacity: 0.6;">Sin archivo seleccionado</span>
         </div>
-        <button class="btn-finalizar" onclick="guardarNuevoProducto()" style="margin-top:10px;">SUBIR AL MENÚ</button>
+        <button class="btn-finalizar" onclick="guardarNuevoProducto()">SUBIR AL MENÚ</button>
         <button onclick="cerrarAdmin()" style="background:none; border:none; color:white; width:100%; margin-top:15px; opacity:0.5; cursor:pointer; font-size:0.8rem;">[ Cerrar Panel ]</button>
     </section>
 
     <main id="menu-dinamico">
-        <section id="entradas">
-            <div class="category-title">Entradas</div>
-            <div class="lista"></div>
-        </section>
-        <section id="comidas">
-            <div class="category-title">Comidas</div>
-            <div class="lista"></div>
-        </section>
-        <section id="sin-alcohol">
-            <div class="category-title">Sin Alcohol</div>
-            <div class="lista"></div>
-        </section>
-        <section id="con-alcohol">
-            <div class="category-title">Con Alcohol</div>
-            <div class="lista"></div>
-        </section>
+        <section id="entradas"><div class="category-title">Entradas</div><div class="lista"></div></section>
+        <section id="comidas"><div class="category-title">Comidas</div><div class="lista"></div></section>
+        <section id="sin-alcohol"><div class="category-title">Sin Alcohol</div><div class="lista"></div></section>
+        <section id="con-alcohol"><div class="category-title">Con Alcohol</div><div class="lista"></div></section>
     </main>
 
     <section id="carrito" class="cart-container">
         <div class="category-title">Tu Pedido</div>
-        <div id="lista-carrito">
-            <p style="text-align: center; opacity: 0.5;">El carrito está vacío</p>
-        </div>
-        <div class="cart-total">
-            <span>TOTAL:</span>
-            <span id="total-precio">$0</span>
-        </div>
+        <div id="lista-carrito"><p style="text-align: center; opacity: 0.5;">El carrito está vacío</p></div>
+        <div class="cart-total"><span>TOTAL:</span><span id="total-precio">$0</span></div>
         <div class="input-mesa">
             <label>N° DE MESA:</label>
-            <input type="number" id="input-mesa" placeholder="Ej: 5" pattern="[0-9]*" inputmode="numeric">
+            <input type="number" id="input-mesa" placeholder="Ej: 5" inputmode="numeric">
         </div>
-        <button class="btn-finalizar" onpointerdown="enviarWhatsApp()">FINALIZAR PEDIDO</button>
+        <button class="btn-finalizar" onclick="enviarWhatsApp()">FINALIZAR PEDIDO</button>
     </section>
 
     <footer>
