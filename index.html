@@ -41,15 +41,16 @@
                 <option value="sin-alcohol">Sin Alcohol</option>
                 <option value="con-alcohol">Con Alcohol</option>
             </select>
-            <label for="add-imagen" class="btn-file-label">📸 Seleccionar de la Galería</label>
+            <label for="add-imagen" class="btn-file-label" style="border: 1px dashed var(--gold); color: var(--gold); padding: 15px; display: block; text-align: center; border-radius: 6px; cursor: pointer;">
+                📸 Seleccionar de la Galería
+            </label>
             <input type="file" id="add-imagen" accept="image/*" style="display: none;" onchange="document.getElementById('file-name-info').innerText = this.files[0].name">
             <p id="file-name-info" style="font-size: 0.7rem; text-align: center; margin-top: 5px; opacity: 0.6;">Sin archivo seleccionado</p>
         </div>
         <button class="btn-finalizar" onclick="guardarNuevoProducto()">SUBIR AL MENÚ</button>
     </section>
 
-    <main id="menu-dinamico">
-        </main>
+    <main id="menu-dinamico"></main>
 
     <section id="carrito" class="cart-container">
         <div class="category-title">Tu Pedido</div>
