@@ -31,7 +31,10 @@ async function cargarMenu() {
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) return;
+    if (error) {
+        console.error("Error al cargar:", error);
+        return;
+    }
 
     const menuDinamico = document.getElementById('menu-dinamico');
     menuDinamico.innerHTML = "";
@@ -41,7 +44,7 @@ async function cargarMenu() {
     categorias.forEach(cat => {
         const items = productos.filter(p => p.categoria === cat);
         if (items.length > 0) {
-            let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div>`;
+            let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div><div class="lista-items">`;
             items.forEach(p => {
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
                 html += `
@@ -57,19 +60,71 @@ async function cargarMenu() {
                         </div>
                     </div>`;
             });
-            html += `</section>`;
+            html += `</div></section>`;
             menuDinamico.innerHTML += html;
         }
     });
 }
 
-// GESTIÓN DEL CARRITO (NUEVA FUNCIÓN DE BORRADO INDIVIDUAL)
+// --- FUNCIÓN CRÍTICA: GUARDAR NUEVO PRODUCTO ---
+async function guardarNuevoProducto() {
+    console.log("Iniciando subida...");
+    const nombre = document.getElementById('add-nombre').value;
+    const precio = document.getElementById('add-precio').value;
+    const categoria = document.getElementById('add-categoria').value;
+    const imagenFile = document.getElementById('add-imagen').files[0];
+
+    if (!nombre || !precio || !imagenFile) {
+        alert("Por favor, completa nombre, precio y selecciona una imagen.");
+        return;
+    }
+
+    try {
+        // 1. Subir imagen al Bucket (Asegúrate de que se llame 'imagenes')
+        const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
+        const { data: imgData, error: imgError } = await _supabase.storage
+            .from('imagenes') // <--- VERIFICA QUE ESTE NOMBRE SEA IGUAL EN TU SUPABASE
+            .upload(fileName, imagenFile);
+
+        if (imgError) throw imgError;
+
+        // 2. Obtener URL pública
+        const { data: publicUrlData } = _supabase.storage
+            .from('imagenes')
+            .getPublicUrl(fileName);
+
+        const imagen_url = publicUrlData.publicUrl;
+
+        // 3. Insertar en la tabla 'productos'
+        const { error: insertError } = await _supabase
+            .from('productos')
+            .insert([{ 
+                nombre: nombre, 
+                precio: parseFloat(precio), 
+                categoria: categoria, 
+                imagen_url: imagen_url 
+            }]);
+
+        if (insertError) throw insertError;
+
+        alert("¡Producto subido con éxito!");
+        // Limpiar campos
+        document.getElementById('add-nombre').value = "";
+        document.getElementById('add-precio').value = "";
+        cargarMenu();
+
+    } catch (err) {
+        console.error("Error completo:", err);
+        alert("Error al subir: " + (err.message || "Consulta la consola (F12)"));
+    }
+}
+
+// GESTIÓN DEL CARRITO
 function agregarAlCarrito(nombre, precio) {
     carrito.push({ nombre, precio });
     actualizarCarritoUI();
 }
 
-// Esta función permite quitar un producto específico por su índice
 function quitarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarCarritoUI();
@@ -89,17 +144,17 @@ function actualizarCarritoUI() {
                     <span style="font-size: 0.9rem;">${item.nombre}</span>
                     <span style="color: var(--gold); font-size: 0.8rem;">€${item.precio}</span>
                 </div>
-                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:2px 8px; font-size:0.6rem; cursor:pointer; text-transform:uppercase;">Quitar</button>
+                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:2px 8px; font-size:0.6rem; cursor:pointer;">Quitar</button>
             </div>`;
     });
     totalElem.innerText = `€${total}`;
 }
 
-// FUNCIONES ADMIN
 async function eliminarProducto(id) {
-    if(!confirm("¿Deseas eliminar este plato permanentemente?")) return;
-    await _supabase.from('productos').delete().eq('id', id);
-    cargarMenu();
+    if(!confirm("¿Eliminar permanentemente?")) return;
+    const { error } = await _supabase.from('productos').delete().eq('id', id);
+    if (error) alert("Error al borrar");
+    else cargarMenu();
 }
 
 function enviarWhatsApp() {
@@ -108,7 +163,7 @@ function enviarWhatsApp() {
     let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
     carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio}\n`);
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
-    window.open(`https://wa.me/34600000000?text=${encodeURIComponent(mensaje)}`);
+    window.open(`https://wa.me/TU_NUMERO_AQUI?text=${encodeURIComponent(mensaje)}`);
 }
 
 window.onload = cargarMenu;
