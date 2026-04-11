@@ -1,4 +1,4 @@
-// CONFIGURACIÓN DE CONEXIÓN
+// CONFIGURACIÓN DE CONEXIÓN A SUPABASE
 const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1aHRyYnp2aW9kY2xpb3F0bWNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ2NTcsImV4cCI6MjA5MTQyMDY1N30.pROjzOh1pN52aDWDJCVWZ4TC6Nqu-cRidk_vAqckAxA"; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -9,6 +9,7 @@ let isAdmin = false;
 // 1. GESTIÓN DE ACCESO (MANTENIMIENTO)
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
+    // Clave configurada según tu solicitud: 031223
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
         document.getElementById('form-admin').style.display = 'block';
@@ -47,6 +48,7 @@ async function cargarMenu() {
         if (items.length > 0) {
             let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div><div class="lista-items">`;
             items.forEach(p => {
+                // Se usa la columna imagen_url o un placeholder si está vacía
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
                 html += `
                     <div class="menu-item">
@@ -83,21 +85,21 @@ async function guardarNuevoProducto() {
         const bucketName = 'imagenes'; 
         const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
 
-        // Subir imagen
+        // Subida de imagen al Storage
         const { data: imgData, error: imgError } = await _supabase.storage
             .from(bucketName)
             .upload(fileName, imagenFile);
 
         if (imgError) throw imgError;
 
-        // URL Pública
+        // Obtener URL Pública de la imagen subida
         const { data: publicUrlData } = _supabase.storage
             .from(bucketName)
             .getPublicUrl(fileName);
 
         const imagen_url = publicUrlData.publicUrl;
 
-        // Insertar en Tabla
+        // Insertar registro en la tabla 'productos'
         const { error: insertError } = await _supabase
             .from('productos')
             .insert([{ 
@@ -110,6 +112,7 @@ async function guardarNuevoProducto() {
         if (insertError) throw insertError;
 
         alert("¡Producto subido con éxito!");
+        // Limpiar campos y refrescar
         document.getElementById('add-nombre').value = "";
         document.getElementById('add-precio').value = "";
         cargarMenu();
@@ -126,6 +129,7 @@ function agregarAlCarrito(nombre, precio) {
     actualizarCarritoUI();
 }
 
+// Permite eliminar productos individualmente del carrito
 function quitarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarCarritoUI();
@@ -159,7 +163,7 @@ async function eliminarProducto(id) {
     else cargarMenu();
 }
 
-// 6. WHATSAPP
+// 6. ENVÍO POR WHATSAPP
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
     if(!mesa || carrito.length === 0) return alert("Ingresa n° de mesa y productos");
@@ -168,9 +172,9 @@ function enviarWhatsApp() {
     carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio}\n`);
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
     
-    // Cambia el número 34000000000 por el tuyo real
+    // Reemplaza con tu número de WhatsApp real (ejemplo: 34600000000)
     window.open(`https://wa.me/34000000000?text=${encodeURIComponent(mensaje)}`);
 }
 
-// INICIO AUTOMÁTICO
+// CARGA INICIAL
 window.onload = cargarMenu;
