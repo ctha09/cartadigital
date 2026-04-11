@@ -6,17 +6,15 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let carrito = [];
 let isAdmin = false;
 
-// LOGIN DE ADMINISTRADOR - CLAVE CORREGIDA
+// LOGIN DE ADMINISTRADOR
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
-    // Ahora configurada exactamente con tu código 031223
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
         document.getElementById('form-admin').style.display = 'block';
         cargarMenu();
-        alert("Acceso concedido");
     } else {
-        alert("Clave incorrecta. Verifica el código.");
+        alert("Clave incorrecta.");
     }
 }
 
@@ -26,18 +24,14 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// CARGAR PRODUCTOS Y GESTIÓN DE IMÁGENES
+// CARGAR MENÚ
 async function cargarMenu() {
-    // Forzamos la tabla en minúsculas para evitar el error de "Table not found"
     const { data: productos, error } = await _supabase
         .from('productos') 
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) {
-        console.error("Error de Supabase:", error);
-        return;
-    }
+    if (error) return;
 
     const menuDinamico = document.getElementById('menu-dinamico');
     menuDinamico.innerHTML = "";
@@ -45,22 +39,17 @@ async function cargarMenu() {
     const categorias = ["entradas", "comidas", "sin-alcohol", "con-alcohol"];
     
     categorias.forEach(cat => {
-        const itemsFiltrados = productos.filter(p => p.categoria === cat);
-        if (itemsFiltrados.length > 0) {
+        const items = productos.filter(p => p.categoria === cat);
+        if (items.length > 0) {
             let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div>`;
-            
-            itemsFiltrados.forEach(p => {
-                // Si la imagen falla, usamos una de respaldo con estética oscura
-                const imgUrl = p.imagen_url ? p.imagen_url : 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=200&auto=format&fit=crop';
-                
+            items.forEach(p => {
+                const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
                 html += `
                     <div class="menu-item">
                         <img src="${imgUrl}" class="item-img" onerror="this.src='https://via.placeholder.com/150/111/c5a059?text=AIRES'">
                         <div class="item-content">
-                            <div class="item-info">
-                                <h3>${p.nombre}</h3>
-                                <p class="price">€${p.precio}</p>
-                            </div>
+                            <h3>${p.nombre}</h3>
+                            <p class="price">€${p.precio}</p>
                             <div class="btn-container">
                                 ${isAdmin ? `<button class="btn-borrar" onclick="eliminarProducto('${p.id}')">BORRAR</button>` : ''}
                                 <button class="btn-order" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">AGREGAR</button>
@@ -74,17 +63,15 @@ async function cargarMenu() {
     });
 }
 
-// ELIMINAR PRODUCTO
-async function eliminarProducto(id) {
-    if(!confirm("¿Deseas eliminar este plato permanentemente?")) return;
-    const { error } = await _supabase.from('productos').delete().eq('id', id);
-    if (error) alert("Error al eliminar");
-    else cargarMenu();
-}
-
-// RESTO DE FUNCIONES (CARRITO Y WHATSAPP)
+// GESTIÓN DEL CARRITO (NUEVA FUNCIÓN DE BORRADO INDIVIDUAL)
 function agregarAlCarrito(nombre, precio) {
     carrito.push({ nombre, precio });
+    actualizarCarritoUI();
+}
+
+// Esta función permite quitar un producto específico por su índice
+function quitarDelCarrito(index) {
+    carrito.splice(index, 1);
     actualizarCarritoUI();
 }
 
@@ -93,12 +80,26 @@ function actualizarCarritoUI() {
     const totalElem = document.getElementById('total-precio');
     lista.innerHTML = "";
     let total = 0;
-    carrito.forEach(item => {
+
+    carrito.forEach((item, index) => {
         total += item.precio;
-        lista.innerHTML += `<div class="item-carrito" style="display:flex; justify-content:space-between; padding:5px 0;">
-            <span>${item.nombre}</span><span>€${item.precio}</span></div>`;
+        lista.innerHTML += `
+            <div class="item-carrito" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size: 0.9rem;">${item.nombre}</span>
+                    <span style="color: var(--gold); font-size: 0.8rem;">€${item.precio}</span>
+                </div>
+                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:2px 8px; font-size:0.6rem; cursor:pointer; text-transform:uppercase;">Quitar</button>
+            </div>`;
     });
     totalElem.innerText = `€${total}`;
+}
+
+// FUNCIONES ADMIN
+async function eliminarProducto(id) {
+    if(!confirm("¿Deseas eliminar este plato permanentemente?")) return;
+    await _supabase.from('productos').delete().eq('id', id);
+    cargarMenu();
 }
 
 function enviarWhatsApp() {
