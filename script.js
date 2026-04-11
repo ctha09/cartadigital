@@ -6,7 +6,7 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let carrito = [];
 let isAdmin = false;
 
-// 1. GESTIÓN DE ACCESO
+// 1. GESTIÓN DE ACCESO (CLAVE: 031223)
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
     if(pass && pass.trim() === "031223") { 
@@ -25,14 +25,17 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// 2. CARGAR MENÚ
+// 2. CARGAR MENÚ DESDE SUPABASE
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
         .from('productos') 
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) return;
+    if (error) {
+        console.error("Error al cargar menú:", error);
+        return;
+    }
 
     const menuDinamico = document.getElementById('menu-dinamico');
     menuDinamico.innerHTML = "";
@@ -45,12 +48,15 @@ async function cargarMenu() {
             let html = `<section id="${cat}"><div class="category-title">${cat.replace("-", " ").toUpperCase()}</div><div class="lista-items">`;
             items.forEach(p => {
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
+                // Convertimos el precio a número y formateamos a 2 decimales
+                const precioFormateado = parseFloat(p.precio).toFixed(2);
+
                 html += `
                     <div class="menu-item">
                         <img src="${imgUrl}" class="item-img" onerror="this.src='https://via.placeholder.com/150/111/c5a059?text=AIRES'">
                         <div class="item-content">
                             <h3>${p.nombre}</h3>
-                            <p class="price">€${p.precio}</p>
+                            <p class="price">€${precioFormateado}</p>
                             <div class="btn-container">
                                 ${isAdmin ? `<button class="btn-borrar" onclick="eliminarProducto('${p.id}')">BORRAR</button>` : ''}
                                 <button class="btn-order" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">AGREGAR</button>
@@ -64,15 +70,15 @@ async function cargarMenu() {
     });
 }
 
-// 3. SUBIR NUEVO PRODUCTO (CON SOPORTE DECIMAL)
+// 3. SUBIR NUEVO PRODUCTO (CON SOPORTE PARA DECIMALES)
 async function guardarNuevoProducto() {
     const nombre = document.getElementById('add-nombre').value;
-    const precioInput = document.getElementById('add-precio').value; // Tomamos el valor como texto primero
+    const precioInput = document.getElementById('add-precio').value; 
     const categoria = document.getElementById('add-categoria').value;
     const imagenFile = document.getElementById('add-imagen').files[0];
 
     if (!nombre || !precioInput || !imagenFile) {
-        alert("Por favor, completa todos los campos.");
+        alert("Por favor, completa nombre, precio y selecciona una imagen.");
         return;
     }
 
@@ -80,7 +86,7 @@ async function guardarNuevoProducto() {
         const bucketName = 'imagenes'; 
         const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
 
-        // Subida de imagen
+        // Subida de imagen al Storage
         const { data: imgData, error: imgError } = await _supabase.storage
             .from(bucketName)
             .upload(fileName, imagenFile);
@@ -93,10 +99,10 @@ async function guardarNuevoProducto() {
 
         const imagen_url = publicUrlData.publicUrl;
 
-        // Convertimos a número decimal usando parseFloat
+        // Convertimos el texto del input a número decimal de forma segura
         const precioDecimal = parseFloat(precioInput.replace(',', '.'));
 
-        // Insertar en Tabla
+        // Insertar en la tabla 'productos'
         const { error: insertError } = await _supabase
             .from('productos')
             .insert([{ 
@@ -106,7 +112,7 @@ async function guardarNuevoProducto() {
                 imagen_url: imagen_url 
             }]);
 
-        if (insertError) throw insertError;
+        if (insertError) throw new Error("Asegúrate de cambiar la columna precio a 'float8' en Supabase: " + insertError.message);
 
         alert("¡Producto subido con éxito!");
         document.getElementById('add-nombre').value = "";
@@ -114,11 +120,12 @@ async function guardarNuevoProducto() {
         cargarMenu();
 
     } catch (err) {
+        console.error("Error al subir:", err);
         alert("Error: " + err.message);
     }
 }
 
-// 4. CARRITO
+// 4. GESTIÓN DEL CARRITO
 function agregarAlCarrito(nombre, precio) {
     carrito.push({ nombre, precio: parseFloat(precio) });
     actualizarCarritoUI();
@@ -146,23 +153,28 @@ function actualizarCarritoUI() {
                 <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:4px 10px; font-size:0.65rem; cursor:pointer; text-transform:uppercase;">Quitar</button>
             </div>`;
     });
-    totalElem.innerText = `€${total.toFixed(2)}`; // Mostramos siempre 2 decimales en el total
+    totalElem.innerText = `€${total.toFixed(2)}`;
 }
 
-// 5. ELIMINAR Y WHATSAPP
+// 5. ELIMINAR DEL MENÚ (ADMIN)
 async function eliminarProducto(id) {
-    if(!confirm("¿Eliminar plato?")) return;
-    await _supabase.from('productos').delete().eq('id', id);
-    cargarMenu();
+    if(!confirm("¿Deseas eliminar este plato permanentemente?")) return;
+    const { error } = await _supabase.from('productos').delete().eq('id', id);
+    if (error) alert("Error al borrar.");
+    else cargarMenu();
 }
 
+// 6. WHATSAPP
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
-    if(!mesa || carrito.length === 0) return alert("Falta mesa o pedido");
+    if(!mesa || carrito.length === 0) return alert("Ingresa n° de mesa y productos");
+    
     let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
     carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio.toFixed(2)}\n`);
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
+    
     window.open(`https://wa.me/34000000000?text=${encodeURIComponent(mensaje)}`);
 }
 
+// INICIO
 window.onload = cargarMenu;
