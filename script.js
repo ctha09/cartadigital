@@ -6,6 +6,7 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // 2. SISTEMA DE TRADUCCIÓN
 const traducciones = {
     es: {
+        ver_menu: "VER MENÚ",
         mantenimiento: "MANTENIMIENTO",
         experiencia: "EXPERIENCIA ARTESANAL",
         pedido: "Tu Pedido",
@@ -24,11 +25,15 @@ const traducciones = {
         "con-alcohol": "CON ALCOHOL",
         agregar: "AGREGAR",
         borrar: "BORRAR",
+        editar: "EDITAR",
         quitar: "Quitar",
+        info: "INFO",
+        ingredientes: "Conoce los ingredientes",
         alerta_datos: "Ingresa n° de mesa y productos",
         alerta_admin: "Por favor, completa nombre, precio y selecciona una imagen."
     },
     en: {
+        ver_menu: "VIEW MENU",
         mantenimiento: "MAINTENANCE",
         experiencia: "ARTISAN EXPERIENCE",
         pedido: "Your Order",
@@ -47,55 +52,12 @@ const traducciones = {
         "con-alcohol": "ALCOHOLIC DRINKS",
         agregar: "ADD",
         borrar: "DELETE",
+        editar: "EDIT",
         quitar: "Remove",
+        info: "INFO",
+        ingredientes: "Discover the ingredients",
         alerta_datos: "Enter table number and products",
         alerta_admin: "Please fill in name, price, and select an image."
-    },
-    pt: {
-        mantenimiento: "MANUTENÇÃO",
-        experiencia: "EXPERIÊNCIA ARTESANAL",
-        pedido: "Seu Pedido",
-        total: "TOTAL:",
-        mesa: "N° DA MESA:",
-        finalizar: "FINALIZAR PEDIDO",
-        subir: "ADICIONAR AO MENU",
-        nuevo: "Novo Produto",
-        foto: "📸 Selecionar Foto",
-        entradas: "ENTRADAS",
-        "platos-de-autor": "PRATOS DE AUTOR",
-        comidas: "REFEIÇÕES",
-        acompañamientos: "ACOMPANHAMENTOS",
-        postres: "SOBREMESAS",
-        "sin-alcohol": "SEM ÁLCOOL",
-        "con-alcohol": "COM ÁLCOOL",
-        agregar: "ADICIONAR",
-        borrar: "EXCLUIR",
-        quitar: "Remover",
-        alerta_datos: "Insira o número da mesa e os produtos",
-        alerta_admin: "Por favor, preencha o nome, preço e selecione uma imagem."
-    },
-    fr: {
-        mantenimiento: "MAINTENANCE",
-        experiencia: "EXPÉRIENCE ARTISANALE",
-        pedido: "Votre Commande",
-        total: "TOTAL :",
-        mesa: "N° DE TABLE :",
-        finalizar: "PASSER COMMANDE",
-        subir: "AJOUTER AU MENU",
-        nuevo: "Nouveau Produit",
-        foto: "📸 Sélectionner Photo",
-        entradas: "ENTRÉES",
-        "platos-de-autor": "PLATS SIGNATURE",
-        comidas: "PLATS",
-        acompañamientos: "ACCOMPAGNEMENTS",
-        postres: "DESSERTS",
-        "sin-alcohol": "SANS ALCOOL",
-        "con-alcohol": "AVEC ALCOOL",
-        agregar: "AJOUTER",
-        borrar: "SUPPRIMER",
-        quitar: "Retirer",
-        alerta_datos: "Entrez le numéro de table et les produits",
-        alerta_admin: "Veuillez remplir le nom, le prix et sélectionner une image."
     }
 };
 
@@ -103,48 +65,46 @@ let idiomaActual = "es";
 let carrito = [];
 let isAdmin = false;
 
-// 3. FUNCIONES DE IDIOMA
+// 3. FUNCIONES DE INTERFAZ
+function entrarAlMenu() {
+    const screen = document.getElementById('welcome-screen');
+    if (screen) screen.classList.add('hidden-welcome');
+    if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(25);
+}
+
+function abrirModal(nombre, desc) {
+    const t = traducciones[idiomaActual];
+    document.getElementById('modal-titulo').innerText = nombre;
+    document.getElementById('modal-desc').innerText = desc || "...";
+    document.querySelector('.modal-content h4').innerText = t.ingredientes;
+    document.getElementById('info-modal').style.display = 'block';
+}
+
+function cerrarModal() {
+    document.getElementById('info-modal').style.display = 'none';
+}
+
 function cambiarIdioma(lang) {
     idiomaActual = lang;
     const t = traducciones[lang];
-
-    // Traducir interfaz fija
-    document.getElementById('btn-admin-view').innerText = t.mantenimiento;
-    document.querySelector('.subtitle').innerText = t.experiencia;
-    document.querySelector('#carrito .category-title').innerText = t.pedido;
-    document.querySelector('.cart-total span:first-child').innerText = t.total;
-    document.querySelector('.input-mesa label').innerText = t.mesa;
-    document.querySelector('#carrito .btn-finalizar').innerText = t.finalizar;
-    
-    // Traducir panel admin si está abierto
-    const adminTitle = document.querySelector('#form-admin .category-title');
-    if(adminTitle) adminTitle.innerText = t.nuevo;
-    
-    const fileLabel = document.querySelector('.btn-file-label');
-    if(fileLabel) fileLabel.innerText = t.foto;
-
-    const adminBtn = document.querySelector('#form-admin .btn-finalizar');
-    if(adminBtn) adminBtn.innerText = t.subir;
-
-    // Traducir Navegación
-    const navItems = document.querySelectorAll('.nav-item');
-    const categoriasKeys = ["entradas", "platos-de-autor", "comidas", "acompañamientos", "postres", "sin-alcohol", "con-alcohol"];
-    navItems.forEach((item, index) => {
-        item.innerText = t[categoriasKeys[index]];
-    });
-
-    // Actualizar menú dinámico para cambiar títulos de categorías y botones
     cargarMenu();
     actualizarCarritoUI();
 }
 
-// 4. GESTIÓN DE ACCESO
+// 4. GESTIÓN DE ACCESO Y MANTENIMIENTO
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
-        document.getElementById('form-admin').style.display = 'block';
-        cargarMenu();
+        const panel = document.getElementById('form-admin');
+        panel.style.display = 'block';
+        
+        cargarMenu(); 
+        
+        setTimeout(() => {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
+
         alert("Acceso concedido");
     } else {
         alert("Clave incorrecta.");
@@ -157,17 +117,14 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// 5. CARGAR MENÚ
+// 5. CARGAR MENÚ Y BOTONES
 async function cargarMenu() {
     const { data: productos, error } = await _supabase
         .from('productos') 
         .select('*')
         .order('nombre', { ascending: true });
 
-    if (error) {
-        console.error("Error al cargar menú:", error);
-        return;
-    }
+    if (error) return console.error("Error cargando productos:", error);
 
     const t = traducciones[idiomaActual];
     const menuDinamico = document.getElementById('menu-dinamico');
@@ -181,17 +138,22 @@ async function cargarMenu() {
             let html = `<section id="${cat}"><div class="category-title">${t[cat]}</div><div class="lista-items">`;
             items.forEach(p => {
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
-                const precioFormateado = parseFloat(p.precio).toFixed(2);
+                const descSegura = p.descripcion ? p.descripcion.replace(/'/g, "&apos;") : "";
+                const nombreSeguro = p.nombre.replace(/'/g, "&apos;");
 
                 html += `
                     <div class="menu-item">
                         <img src="${imgUrl}" class="item-img" onerror="this.src='https://via.placeholder.com/150/111/c5a059?text=AIRES'">
                         <div class="item-content">
                             <h3>${p.nombre}</h3>
-                            <p class="price">€${precioFormateado}</p>
+                            <p class="price">€${parseFloat(p.precio).toFixed(2)}</p>
                             <div class="btn-container">
-                                ${isAdmin ? `<button class="btn-borrar" onclick="eliminarProducto('${p.id}')">${t.borrar}</button>` : ''}
-                                <button class="btn-order" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">${t.agregar}</button>
+                                ${isAdmin ? `
+                                    <button class="btn-borrar" onclick="eliminarProducto('${p.id}')">${t.borrar}</button>
+                                    <button class="btn-editar" onclick="editarProducto('${p.id}', '${nombreSeguro}', ${p.precio}, '${descSegura}')">${t.editar}</button>
+                                ` : ''}
+                                <button class="btn-ver-desc" onclick="abrirModal('${nombreSeguro}', '${descSegura}')">${t.info}</button>
+                                <button class="btn-order" onclick="agregarAlCarrito('${nombreSeguro}', ${p.precio})">${t.agregar}</button>
                             </div>
                         </div>
                     </div>`;
@@ -202,60 +164,84 @@ async function cargarMenu() {
     });
 }
 
-// 6. SUBIR NUEVO PRODUCTO
+// 6. ACCIONES ADMIN (EDICIÓN COMPLETA)
+async function editarProducto(id, nombreActual, precioActual, descActual) {
+    const nuevoNombre = prompt(`Editar nombre de "${nombreActual}":`, nombreActual);
+    if (nuevoNombre === null || nuevoNombre.trim() === "") return;
+
+    const nuevoPrecio = prompt(`Editar precio de "${nuevoNombre}":`, precioActual);
+    if (nuevoPrecio === null || nuevoPrecio.trim() === "") return;
+
+    const nuevaDesc = prompt(`Editar descripción de "${nuevoNombre}":`, descActual);
+    if (nuevaDesc === null) return;
+
+    const { error } = await _supabase.from('productos').update({ 
+        nombre: nuevoNombre,
+        precio: parseFloat(nuevoPrecio),
+        descripcion: nuevaDesc 
+    }).eq('id', id);
+    
+    if (error) {
+        alert("Error al actualizar");
+    } else {
+        alert("Producto actualizado con éxito");
+        cargarMenu();
+    }
+}
+
 async function guardarNuevoProducto() {
     const t = traducciones[idiomaActual];
     const nombre = document.getElementById('add-nombre').value;
     const precioInput = document.getElementById('add-precio').value; 
     const categoria = document.getElementById('add-categoria').value;
+    const descripcion = document.getElementById('add-descripcion').value;
     const imagenFile = document.getElementById('add-imagen').files[0];
 
-    if (!nombre || !precioInput || !imagenFile) {
-        alert(t.alerta_admin);
-        return;
-    }
+    if (!nombre || !precioInput || !imagenFile) return alert(t.alerta_admin);
 
     try {
-        const bucketName = 'imagenes'; 
         const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
-
         const { data: imgData, error: imgError } = await _supabase.storage
-            .from(bucketName)
+            .from('imagenes')
             .upload(fileName, imagenFile);
 
         if (imgError) throw imgError;
 
-        const { data: publicUrlData } = _supabase.storage
-            .from(bucketName)
-            .getPublicUrl(fileName);
+        const { data: publicUrlData } = _supabase.storage.from('imagenes').getPublicUrl(fileName);
 
-        const imagen_url = publicUrlData.publicUrl;
-        const precioDecimal = parseFloat(precioInput);
-
-        const { error: insertError } = await _supabase
-            .from('productos')
-            .insert([{ 
-                nombre: nombre, 
-                precio: precioDecimal, 
-                categoria: categoria, 
-                imagen_url: imagen_url 
-            }]);
+        const { error: insertError } = await _supabase.from('productos').insert([{ 
+            nombre, 
+            precio: parseFloat(precioInput), 
+            categoria, 
+            descripcion,
+            imagen_url: publicUrlData.publicUrl 
+        }]);
 
         if (insertError) throw insertError;
 
-        alert("¡Producto subido con éxito!");
+        alert("Producto guardado");
         document.getElementById('add-nombre').value = "";
         document.getElementById('add-precio').value = "";
-        cargarMenu();
+        document.getElementById('add-descripcion').value = "";
+        cargarMenu(); 
+    } catch (err) { alert("Error: " + err.message); }
+}
 
-    } catch (err) {
-        alert("Error: " + err.message);
+async function eliminarProducto(id) {
+    if(confirm("¿Eliminar producto?")) {
+        const { error } = await _supabase.from('productos').delete().eq('id', id);
+        cargarMenu();
     }
 }
 
-// 7. CARRITO
+// 7. CARRITO Y WHATSAPP
 function agregarAlCarrito(nombre, precio) {
-    carrito.push({ nombre, precio: parseFloat(precio) });
+    const productoExistente = carrito.find(item => item.nombre === nombre);
+    if (productoExistente) {
+        productoExistente.cantidad += 1;
+    } else {
+        carrito.push({ nombre, precio: parseFloat(precio), cantidad: 1 });
+    }
     actualizarCarritoUI();
 }
 
@@ -272,34 +258,36 @@ function actualizarCarritoUI() {
     let total = 0;
 
     carrito.forEach((item, index) => {
-        total += item.precio;
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
         lista.innerHTML += `
-            <div class="item-carrito" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <div class="item-carrito">
                 <div style="display:flex; flex-direction:column;">
-                    <span style="font-size: 0.95rem; font-weight: 600;">${item.nombre}</span>
-                    <span style="color: var(--gold); font-size: 0.85rem;">€${item.precio.toFixed(2)}</span>
+                    <span style="font-weight: 600;">${item.nombre} ${item.cantidad > 1 ? `(${item.cantidad})` : ''}</span>
+                    <span style="color: var(--gold); font-size: 0.85rem;">€${subtotal.toFixed(2)}</span>
                 </div>
-                <button onclick="quitarDelCarrito(${index})" style="background:none; border:1px solid #ff4444; color:#ff4444; border-radius:4px; padding:4px 10px; font-size:0.65rem; cursor:pointer; text-transform:uppercase;">${t.quitar}</button>
+                <button onclick="quitarDelCarrito(${index})" class="btn-borrar" style="padding: 4px 8px; font-size: 0.6rem;">${t.quitar}</button>
             </div>`;
     });
     totalElem.innerText = `€${total.toFixed(2)}`;
-}
-
-// 8. ELIMINAR Y WHATSAPP
-async function eliminarProducto(id) {
-    if(!confirm("¿Eliminar plato?")) return;
-    await _supabase.from('productos').delete().eq('id', id);
-    cargarMenu();
 }
 
 function enviarWhatsApp() {
     const t = traducciones[idiomaActual];
     const mesa = document.getElementById('input-mesa').value;
     if(!mesa || carrito.length === 0) return alert(t.alerta_datos);
+    
     let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
-    carrito.forEach(i => mensaje += `• ${i.nombre} - €${i.precio.toFixed(2)}\n`);
+    carrito.forEach(i => {
+        mensaje += `• ${i.nombre} ${i.cantidad > 1 ? `(x${i.cantidad})` : ''} - €${(i.precio * i.cantidad).toFixed(2)}\n`;
+    });
     mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
-    window.open(`https://wa.me/34000000000?text=${encodeURIComponent(mensaje)}`);
+    
+    window.open(`https://wa.me/543751246552?text=${encodeURIComponent(mensaje)}`);
 }
 
-window.onload = cargarMenu;
+document.addEventListener('DOMContentLoaded', () => {
+    const btnMantenimiento = document.getElementById('btn-admin-view');
+    if (btnMantenimiento) btnMantenimiento.onclick = toggleAdmin;
+    cargarMenu();
+});
