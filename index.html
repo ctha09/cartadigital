@@ -21,18 +21,19 @@
             </div>
             <div class="logo-estoril">ESTORIL</div>
             <div class="divider-gold"></div>
+            
+            <div class="welcome-lang-selector">
+                <select id="select-idioma-welcome" onchange="cambiarIdioma(this.value)">
+                    <option value="es">ESPAÑOL 🇪🇸</option>
+                    <option value="en">ENGLISH 🇬🇧</option>
+                    <option value="pt">PORTUGUÊS 🇧🇷</option>
+                    <option value="fr">FRANÇAIS 🇫🇷</option>
+                </select>
+            </div>
+
             <button class="btn-ver-menu" onclick="entrarAlMenu()">VER MENÚ</button>
             <div class="welcome-subtitle">Experiencia Artesanal</div>
         </div>
-    </div>
-
-    <div class="language-selector">
-        <select id="select-idioma" onchange="cambiarIdioma(this.value)">
-            <option value="es">ES 🇪🇸</option>
-            <option value="en">EN 🇬🇧</option>
-            <option value="pt">PT 🇧🇷</option>
-            <option value="fr">FR 🇫🇷</option>
-        </select>
     </div>
 
     <div class="container">
@@ -46,7 +47,7 @@
             <button id="btn-admin-view">MANTENIMIENTO</button>
         </header>
 
-        <div id="form-admin">
+        <div id="form-admin" style="display: none;">
             <div class="category-title">Nuevo Producto</div>
             <div class="input-admin-group">
                 <input type="text" id="add-nombre" placeholder="Nombre del plato">
@@ -62,7 +63,7 @@
                 </select>
                 <textarea id="add-descripcion" placeholder="Descripción / Ingredientes (Ej: Carne de buey, rúcula, parmesano...)"></textarea>
                 
-                <label for="add-imagen" class="btn-file-label" style="display:block; margin-bottom:5px; cursor:pointer; color:var(--gold); font-size:0.75rem; border: 1px dashed var(--gold); padding: 12px; text-align: center; border-radius: 6px;">
+                <label for="add-imagen" class="btn-file-label" style="display:block; cursor:pointer; color:var(--gold); font-size:0.75rem; border: 1px dashed var(--gold); padding: 12px; text-align: center; border-radius: 6px; margin-bottom: 5px;">
                     📸 Seleccionar Foto
                 </label>
                 <input type="file" id="add-imagen" accept="image/*" style="display:none;">
