@@ -31,7 +31,7 @@ body {
     line-height: 1.6;
 }
 
-/* --- PANTALLA DE PORTADA (HERO) --- */
+/* --- PANTALLA DE PORTADA (WELCOME SCREEN) --- */
 #welcome-screen {
     position: fixed;
     top: 0;
@@ -57,8 +57,26 @@ body {
     filter: blur(60px);
 }
 
-.welcome-content { position: relative; text-align: center; z-index: 2; padding: 20px; }
+.welcome-content { position: relative; text-align: center; z-index: 2; padding: 20px; width: 100%; }
 .divider-gold { width: 60px; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.6; }
+
+/* Selector de idioma en Portada */
+.welcome-lang-selector {
+    margin-bottom: 25px;
+}
+
+#select-idioma-welcome {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    color: var(--gold);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    outline: none;
+    cursor: pointer;
+}
 
 .btn-ver-menu {
     background: none;
@@ -76,19 +94,7 @@ body {
 
 .btn-ver-menu:hover { color: var(--gold); letter-spacing: 9px; }
 .hidden-welcome { opacity: 0; visibility: hidden; pointer-events: none; }
-
-/* --- SELECTOR DE IDIOMA --- */
-.language-selector { position: absolute; top: 15px; left: 15px; z-index: 1001; }
-#select-idioma {
-    background: rgba(10, 10, 10, 0.8);
-    color: var(--gold);
-    border: 1px solid rgba(197, 160, 89, 0.4);
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    outline: none;
-}
+.welcome-subtitle { font-size: 0.8rem; margin-top: 15px; letter-spacing: 3px; opacity: 0.7; text-transform: uppercase; }
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .container {
@@ -99,7 +105,6 @@ body {
     border-right: 1px solid rgba(197, 160, 89, 0.1);
     padding: 40px 15px;
     min-height: 100vh;
-    position: relative;
 }
 
 header { 
@@ -134,9 +139,7 @@ header {
 .logo-estoril { font-size: 0.85rem; letter-spacing: 7px; color: var(--gold); text-transform: uppercase; margin-top: 5px; }
 .subtitle { font-size: 0.65rem; letter-spacing: 3px; opacity: 0.5; margin-top: 12px; text-transform: uppercase; }
 
-/* --- BOTÓN MANTENIMIENTO --- */
 #btn-admin-view {
-    display: inline-block;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(197, 160, 89, 0.2);
     color: var(--gold);
@@ -146,10 +149,9 @@ header {
     cursor: pointer;
     margin-top: 20px;
     border-radius: 4px;
-    transition: var(--transition);
 }
 
-/* --- PANEL DE ADMINISTRACIÓN (CORREGIDO) --- */
+/* --- PANEL DE MANTENIMIENTO (CORREGIDO) --- */
 #form-admin { 
     background: #0d0d0d; 
     border: 1px solid var(--gold); 
@@ -157,13 +159,12 @@ header {
     border-radius: 12px; 
     margin-bottom: 40px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    display: none; /* Se activa por JS */
 }
 
 .input-admin-group {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Espacio real entre inputs para evitar que se encimen */
+    gap: 15px; /* Espaciado entre inputs */
 }
 
 .input-admin-group input, 
@@ -172,19 +173,16 @@ header {
     display: block;
     width: 100%;
     background: #000; 
-    border: 1px solid rgba(197, 160, 89, 0.5); 
+    border: 1px solid rgba(197, 160, 89, 0.4); 
     color: #fff; 
     padding: 12px; 
-    outline: none; 
     border-radius: 6px; 
-    font-family: inherit; 
+    font-family: inherit;
     font-size: 0.9rem;
+    outline: none;
 }
 
-textarea#add-descripcion { 
-    height: 100px; 
-    resize: none; 
-}
+.input-admin-group textarea { height: 100px; resize: none; }
 
 /* --- NAVEGACIÓN --- */
 .nav-sectors {
@@ -221,24 +219,23 @@ textarea#add-descripcion {
 .item-content h3 { font-size: 1rem; color: #fff; margin-bottom: 4px; }
 .price { color: var(--gold); font-weight: 700; font-size: 1.1rem; }
 
-/* --- BOTONES DE PRODUCTO --- */
+/* --- BOTONES --- */
 .btn-container { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 .btn-order { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 12px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; flex: 2; }
 .btn-ver-desc { background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 8px 12px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
 .btn-borrar { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
 .btn-editar { background: transparent; border: 1px solid var(--edit-blue); color: var(--edit-blue); padding: 6px 12px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
 
-/* --- MODAL --- */
-.modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
-.modal-content { background: #111; margin: 20% auto; padding: 30px; border: 1px solid var(--gold); width: 85%; max-width: 450px; border-radius: 12px; text-align: center; position: relative; }
-.close-modal { position: absolute; top: 10px; right: 15px; color: var(--gold); font-size: 28px; cursor: pointer; }
-
 /* --- CARRITO --- */
 .cart-container { background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(197, 160, 89, 0.2); padding: 20px; border-radius: 10px; margin-top: 40px; }
 .item-carrito { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .cart-total { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid var(--gold); padding-top: 15px; font-size: 1.1rem; font-weight: 700; }
-
 .btn-finalizar { width: 100%; background: var(--gold-gradient); color: #000; border: none; padding: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; border-radius: 6px; margin-top: 15px; }
+
+/* --- MODAL --- */
+.modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
+.modal-content { background: #111; margin: 20% auto; padding: 30px; border: 1px solid var(--gold); width: 85%; max-width: 450px; border-radius: 12px; text-align: center; position: relative; }
+.close-modal { position: absolute; top: 10px; right: 15px; color: var(--gold); font-size: 28px; cursor: pointer; }
 
 /* --- FOOTER --- */
 footer { text-align: center; margin-top: 60px; padding: 30px; border-top: 1px solid rgba(197, 160, 89, 0.1); }
