@@ -3,7 +3,7 @@ const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1aHRyYnp2aW9kY2xpb3F0bWNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ2NTcsImV4cCI6MjA5MTQyMDY1N30.pROjzOh1pN52aDWDJCVWZ4TC6Nqu-cRidk_vAqckAxA"; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 2. SISTEMA DE TRADUCCIÓN COMPLETO (Corregido para FR y PT)
+// 2. SISTEMA DE TRADUCCIÓN COMPLETO
 const traducciones = {
     es: {
         ver_menu: "VER MENÚ", mantenimiento: "MANTENIMIENTO", experiencia: "EXPERIENCIA ARTESANAL",
@@ -33,7 +33,7 @@ const traducciones = {
         acompañamientos: "ACOMPANHAMENTOS", postres: "SOBREMESAS", "sin-alcohol": "SEM ÁLCOOL",
         "con-alcohol": "COM ÁLCOOL", agregar: "ADICIONAR", borrar: "EXCLUIR", editar: "EDITAR",
         quitar: "Remover", info: "INFO", ingredientes: "Conheça os ingredientes",
-        alerta_datos: "Insira o n° da mesa e produtos", alerta_admin: "Por favor, preencha nome, preço e selecione uma imagem."
+        alerta_datos: "Insira o n° da mesa e productos", alerta_admin: "Por favor, preencha nome, preço e selecione uma imagem."
     },
     fr: {
         ver_menu: "VOIR LE MENU", mantenimiento: "MAINTENANCE", experiencia: "EXPÉRIENCE ARTISANALE",
@@ -72,7 +72,13 @@ function cambiarIdioma(lang) {
     idiomaActual = lang;
     const t = traducciones[lang];
     
-    // Actualizar textos estáticos
+    // Actualizar elementos de la portada
+    const btnPortada = document.querySelector('.btn-ver-menu');
+    const subPortada = document.querySelector('.welcome-subtitle');
+    if(btnPortada) btnPortada.innerText = t.ver_menu;
+    if(subPortada) subPortada.innerText = t.experiencia;
+
+    // Actualizar elementos del menú
     document.getElementById('btn-admin-view').innerText = t.mantenimiento;
     document.querySelector('.subtitle').innerText = t.experiencia;
     document.querySelector('#carrito .category-title').innerText = t.pedido;
@@ -88,9 +94,10 @@ function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
-        document.getElementById('form-admin').style.display = 'block';
+        const panel = document.getElementById('form-admin');
+        panel.style.display = 'block';
         cargarMenu(); 
-        setTimeout(() => { document.getElementById('form-admin').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+        setTimeout(() => { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
     } else { alert("Clave incorrecta."); }
 }
 
@@ -100,7 +107,7 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// 5. CARGAR MENÚ (Mejorado para evitar que desaparezca)
+// 5. CARGAR MENÚ
 async function cargarMenu() {
     const { data: productos, error } = await _supabase.from('productos').select('*').order('nombre', { ascending: true });
     if (error) return console.error(error);
@@ -114,7 +121,6 @@ async function cargarMenu() {
     categorias.forEach(cat => {
         const items = productos.filter(p => p.categoria === cat);
         if (items.length > 0) {
-            // Si la categoría no existe en el idioma, usa el nombre en español por defecto
             const nombreCat = t[cat] || traducciones['es'][cat]; 
             let html = `<section id="${cat}"><div class="category-title">${nombreCat}</div><div class="lista-items">`;
             items.forEach(p => {
@@ -145,19 +151,25 @@ async function cargarMenu() {
     });
 }
 
-// 6. ACCIONES ADMIN
+// 6. ACCIONES ADMIN (EDICIÓN COMPLETA)
 async function editarProducto(id, nombreActual, precioActual, descActual) {
-    const nuevoNombre = prompt(`Editar nombre:`, nombreActual);
-    if (!nuevoNombre) return;
-    const nuevoPrecio = prompt(`Editar precio:`, precioActual);
-    if (!nuevoPrecio) return;
-    const nuevaDesc = prompt(`Editar descripción:`, descActual);
+    const nuevoNombre = prompt(`Nombre del producto:`, nombreActual);
+    if (nuevoNombre === null || nuevoNombre.trim() === "") return;
+
+    const nuevoPrecio = prompt(`Precio de "${nuevoNombre}":`, precioActual);
+    if (nuevoPrecio === null || nuevoPrecio.trim() === "") return;
+
+    const nuevaDesc = prompt(`Descripción de "${nuevoNombre}":`, descActual);
+    if (nuevaDesc === null) return;
 
     const { error } = await _supabase.from('productos').update({ 
-        nombre: nuevoNombre, precio: parseFloat(nuevoPrecio), descripcion: nuevaDesc 
+        nombre: nuevoNombre, 
+        precio: parseFloat(nuevoPrecio), 
+        descripcion: nuevaDesc 
     }).eq('id', id);
     
-    if (!error) { alert("¡Actualizado!"); cargarMenu(); }
+    if (error) alert("Error al actualizar");
+    else { alert("¡Actualizado!"); cargarMenu(); }
 }
 
 async function guardarNuevoProducto() {
@@ -171,7 +183,7 @@ async function guardarNuevoProducto() {
     if (!nombre || !precio || !imagenFile) return alert(t.alerta_admin);
 
     try {
-        const fileName = `${Date.now()}_${imagenFile.name}`;
+        const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
         await _supabase.storage.from('imagenes').upload(fileName, imagenFile);
         const { data: publicUrlData } = _supabase.storage.from('imagenes').getPublicUrl(fileName);
 
@@ -179,19 +191,22 @@ async function guardarNuevoProducto() {
             nombre, precio: parseFloat(precio), categoria, descripcion, imagen_url: publicUrlData.publicUrl 
         }]);
 
-        alert("Guardado");
+        alert("Guardado con éxito");
+        document.getElementById('add-nombre').value = "";
+        document.getElementById('add-precio').value = "";
+        document.getElementById('add-descripcion').value = "";
         cargarMenu(); 
-    } catch (err) { alert("Error al subir"); }
+    } catch (err) { alert("Error al subir el producto"); }
 }
 
 async function eliminarProducto(id) {
-    if(confirm("¿Eliminar?")) {
+    if(confirm("¿Seguro que deseas eliminar este producto?")) {
         await _supabase.from('productos').delete().eq('id', id);
         cargarMenu();
     }
 }
 
-// 7. CARRITO
+// 7. CARRITO Y WHATSAPP
 function agregarAlCarrito(nombre, precio) {
     const item = carrito.find(i => i.nombre === nombre);
     if (item) item.cantidad += 1;
@@ -212,11 +227,12 @@ function actualizarCarritoUI() {
     let total = 0;
 
     carrito.forEach((item, index) => {
-        total += item.precio * item.cantidad;
+        const sub = item.precio * item.cantidad;
+        total += sub;
         lista.innerHTML += `
             <div class="item-carrito">
-                <div><b>${item.nombre} (x${item.cantidad})</b><br>€${(item.precio * item.cantidad).toFixed(2)}</div>
-                <button onclick="quitarDelCarrito(${index})" class="btn-borrar">${t.quitar}</button>
+                <div><b>${item.nombre} (x${item.cantidad})</b><br><span style="color:var(--gold)">€${sub.toFixed(2)}</span></div>
+                <button onclick="quitarDelCarrito(${index})" class="btn-borrar" style="padding:4px 8px; font-size:0.6rem;">${t.quitar}</button>
             </div>`;
     });
     totalElem.innerText = `€${total.toFixed(2)}`;
@@ -225,8 +241,11 @@ function actualizarCarritoUI() {
 function enviarWhatsApp() {
     const mesa = document.getElementById('input-mesa').value;
     if(!mesa || carrito.length === 0) return alert(traducciones[idiomaActual].alerta_datos);
-    let msg = `*PEDIDO MESA ${mesa}*\n`;
-    carrito.forEach(i => { msg += `- ${i.nombre} (x${i.cantidad})\n`; });
+    
+    let msg = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
+    carrito.forEach(i => { msg += `• ${i.nombre} (x${i.cantidad}) - €${(i.i.precio * i.cantidad).toFixed(2)}\n`; });
+    msg += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
+    
     window.open(`https://wa.me/34000000000?text=${encodeURIComponent(msg)}`);
 }
 
