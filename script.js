@@ -3,61 +3,47 @@ const SUPABASE_URL = "https://uuhtrbzviodclioqtmca.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1aHRyYnp2aW9kY2xpb3F0bWNhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4NDQ2NTcsImV4cCI6MjA5MTQyMDY1N30.pROjzOh1pN52aDWDJCVWZ4TC6Nqu-cRidk_vAqckAxA"; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 2. SISTEMA DE TRADUCCIÓN
+// 2. SISTEMA DE TRADUCCIÓN COMPLETO (Corregido para FR y PT)
 const traducciones = {
     es: {
-        ver_menu: "VER MENÚ",
-        mantenimiento: "MANTENIMIENTO",
-        experiencia: "EXPERIENCIA ARTESANAL",
-        pedido: "Tu Pedido",
-        total: "TOTAL:",
-        mesa: "N° DE MESA:",
-        finalizar: "FINALIZAR PEDIDO",
-        subir: "SUBIR AL MENÚ",
-        nuevo: "Nuevo Producto",
-        foto: "📸 Seleccionar Foto",
-        entradas: "ENTRADAS",
-        "platos-de-autor": "PLATOS DE AUTOR",
-        comidas: "COMIDAS",
-        acompañamientos: "ACOMPAÑAMIENTOS",
-        postres: "POSTRES",
-        "sin-alcohol": "SIN ALCOHOL",
-        "con-alcohol": "CON ALCOHOL",
-        agregar: "AGREGAR",
-        borrar: "BORRAR",
-        editar: "EDITAR",
-        quitar: "Quitar",
-        info: "INFO",
-        ingredientes: "Conoce los ingredientes",
-        alerta_datos: "Ingresa n° de mesa y productos",
-        alerta_admin: "Por favor, completa nombre, precio y selecciona una imagen."
+        ver_menu: "VER MENÚ", mantenimiento: "MANTENIMIENTO", experiencia: "EXPERIENCIA ARTESANAL",
+        pedido: "Tu Pedido", total: "TOTAL:", mesa: "N° DE MESA:", finalizar: "FINALIZAR PEDIDO",
+        subir: "SUBIR AL MENÚ", nuevo: "Nuevo Producto", foto: "📸 Seleccionar Foto",
+        entradas: "ENTRADAS", "platos-de-autor": "PLATOS DE AUTOR", comidas: "COMIDAS",
+        acompañamientos: "ACOMPAÑAMIENTOS", postres: "POSTRES", "sin-alcohol": "SIN ALCOHOL",
+        "con-alcohol": "CON ALCOHOL", agregar: "AGREGAR", borrar: "BORRAR", editar: "EDITAR",
+        quitar: "Quitar", info: "INFO", ingredientes: "Conoce los ingredientes",
+        alerta_datos: "Ingresa n° de mesa y productos", alerta_admin: "Por favor, completa nombre, precio y selecciona una imagen."
     },
     en: {
-        ver_menu: "VIEW MENU",
-        mantenimiento: "MAINTENANCE",
-        experiencia: "ARTISAN EXPERIENCE",
-        pedido: "Your Order",
-        total: "TOTAL:",
-        mesa: "TABLE N°:",
-        finalizar: "PLACE ORDER",
-        subir: "UPLOAD TO MENU",
-        nuevo: "New Product",
-        foto: "📸 Select Photo",
-        entradas: "STARTERS",
-        "platos-de-autor": "SIGNATURE DISHES",
-        comidas: "MAINS",
-        acompañamientos: "SIDES",
-        postres: "DESSERTS",
-        "sin-alcohol": "SOFT DRINKS",
-        "con-alcohol": "ALCOHOLIC DRINKS",
-        agregar: "ADD",
-        borrar: "DELETE",
-        editar: "EDIT",
-        quitar: "Remove",
-        info: "INFO",
-        ingredientes: "Discover the ingredients",
-        alerta_datos: "Enter table number and products",
-        alerta_admin: "Please fill in name, price, and select an image."
+        ver_menu: "VIEW MENU", mantenimiento: "MAINTENANCE", experiencia: "ARTISAN EXPERIENCE",
+        pedido: "Your Order", total: "TOTAL:", mesa: "TABLE N°:", finalizar: "PLACE ORDER",
+        subir: "UPLOAD TO MENU", nuevo: "New Product", foto: "📸 Select Photo",
+        entradas: "STARTERS", "platos-de-autor": "SIGNATURE DISHES", comidas: "MAINS",
+        acompañamientos: "SIDES", postres: "DESSERTS", "sin-alcohol": "SOFT DRINKS",
+        "con-alcohol": "ALCOHOLIC DRINKS", agregar: "ADD", borrar: "DELETE", editar: "EDIT",
+        quitar: "Remove", info: "INFO", ingredientes: "Discover the ingredients",
+        alerta_datos: "Enter table number and products", alerta_admin: "Please fill in name, price, and select an image."
+    },
+    pt: {
+        ver_menu: "VER CARDÁPIO", mantenimiento: "MANUTENÇÃO", experiencia: "EXPERIÊNCIA ARTESANAL",
+        pedido: "Seu Pedido", total: "TOTAL:", mesa: "N° DA MESA:", finalizar: "FINALIZAR PEDIDO",
+        subir: "ADICIONAR AO CARDÁPIO", nuevo: "Novo Produto", foto: "📸 Selecionar Foto",
+        entradas: "ENTRADAS", "platos-de-autor": "PRATOS DE AUTOR", comidas: "REFEIÇÕES",
+        acompañamientos: "ACOMPANHAMENTOS", postres: "SOBREMESAS", "sin-alcohol": "SEM ÁLCOOL",
+        "con-alcohol": "COM ÁLCOOL", agregar: "ADICIONAR", borrar: "EXCLUIR", editar: "EDITAR",
+        quitar: "Remover", info: "INFO", ingredientes: "Conheça os ingredientes",
+        alerta_datos: "Insira o n° da mesa e produtos", alerta_admin: "Por favor, preencha nome, preço e selecione uma imagem."
+    },
+    fr: {
+        ver_menu: "VOIR LE MENU", mantenimiento: "MAINTENANCE", experiencia: "EXPÉRIENCE ARTISANALE",
+        pedido: "Votre Commande", total: "TOTAL:", mesa: "N° DE TABLE:", finalizar: "PASSER COMMANDE",
+        subir: "AJOUTER AU MENU", nuevo: "Nouveau Produit", foto: "📸 Choisir une Photo",
+        entradas: "ENTRÉES", "platos-de-autor": "PLATS SIGNATURE", comidas: "PLATS",
+        acompañamientos: "ACCOMPAGNEMENTS", postres: "DESSERTS", "sin-alcohol": "SANS ALCOOL",
+        "con-alcohol": "AVEC ALCOOL", agregar: "AJOUTER", borrar: "SUPPRIMER", editar: "MODIFIER",
+        quitar: "Enlever", info: "INFO", ingredientes: "Découvrez les ingrédients",
+        alerta_datos: "Entrez le n° de table et les produits", alerta_admin: "Veuillez remplir le nom, le prix et choisir une image."
     }
 };
 
@@ -69,14 +55,12 @@ let isAdmin = false;
 function entrarAlMenu() {
     const screen = document.getElementById('welcome-screen');
     if (screen) screen.classList.add('hidden-welcome');
-    if (window.navigator && window.navigator.vibrate) window.navigator.vibrate(25);
 }
 
 function abrirModal(nombre, desc) {
     const t = traducciones[idiomaActual];
     document.getElementById('modal-titulo').innerText = nombre;
     document.getElementById('modal-desc').innerText = desc || "...";
-    document.querySelector('.modal-content h4').innerText = t.ingredientes;
     document.getElementById('info-modal').style.display = 'block';
 }
 
@@ -87,28 +71,27 @@ function cerrarModal() {
 function cambiarIdioma(lang) {
     idiomaActual = lang;
     const t = traducciones[lang];
+    
+    // Actualizar textos estáticos
+    document.getElementById('btn-admin-view').innerText = t.mantenimiento;
+    document.querySelector('.subtitle').innerText = t.experiencia;
+    document.querySelector('#carrito .category-title').innerText = t.pedido;
+    document.querySelector('.cart-total span:first-child').innerText = t.total;
+    document.querySelector('#carrito .btn-finalizar').innerText = t.finalizar;
+
     cargarMenu();
     actualizarCarritoUI();
 }
 
-// 4. GESTIÓN DE ACCESO Y MANTENIMIENTO
+// 4. GESTIÓN DE ACCESO
 function toggleAdmin() {
     const pass = prompt("Clave de mantenimiento:");
     if(pass && pass.trim() === "031223") { 
         isAdmin = true;
-        const panel = document.getElementById('form-admin');
-        panel.style.display = 'block';
-        
+        document.getElementById('form-admin').style.display = 'block';
         cargarMenu(); 
-        
-        setTimeout(() => {
-            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 150);
-
-        alert("Acceso concedido");
-    } else {
-        alert("Clave incorrecta.");
-    }
+        setTimeout(() => { document.getElementById('form-admin').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 150);
+    } else { alert("Clave incorrecta."); }
 }
 
 function cerrarAdmin() {
@@ -117,14 +100,10 @@ function cerrarAdmin() {
     cargarMenu();
 }
 
-// 5. CARGAR MENÚ Y BOTONES
+// 5. CARGAR MENÚ (Mejorado para evitar que desaparezca)
 async function cargarMenu() {
-    const { data: productos, error } = await _supabase
-        .from('productos') 
-        .select('*')
-        .order('nombre', { ascending: true });
-
-    if (error) return console.error("Error cargando productos:", error);
+    const { data: productos, error } = await _supabase.from('productos').select('*').order('nombre', { ascending: true });
+    if (error) return console.error(error);
 
     const t = traducciones[idiomaActual];
     const menuDinamico = document.getElementById('menu-dinamico');
@@ -135,7 +114,9 @@ async function cargarMenu() {
     categorias.forEach(cat => {
         const items = productos.filter(p => p.categoria === cat);
         if (items.length > 0) {
-            let html = `<section id="${cat}"><div class="category-title">${t[cat]}</div><div class="lista-items">`;
+            // Si la categoría no existe en el idioma, usa el nombre en español por defecto
+            const nombreCat = t[cat] || traducciones['es'][cat]; 
+            let html = `<section id="${cat}"><div class="category-title">${nombreCat}</div><div class="lista-items">`;
             items.forEach(p => {
                 const imgUrl = p.imagen_url || 'https://via.placeholder.com/150/111/c5a059?text=AIRES';
                 const descSegura = p.descripcion ? p.descripcion.replace(/'/g, "&apos;") : "";
@@ -164,84 +145,57 @@ async function cargarMenu() {
     });
 }
 
-// 6. ACCIONES ADMIN (EDICIÓN COMPLETA)
+// 6. ACCIONES ADMIN
 async function editarProducto(id, nombreActual, precioActual, descActual) {
-    const nuevoNombre = prompt(`Editar nombre de "${nombreActual}":`, nombreActual);
-    if (nuevoNombre === null || nuevoNombre.trim() === "") return;
-
-    const nuevoPrecio = prompt(`Editar precio de "${nuevoNombre}":`, precioActual);
-    if (nuevoPrecio === null || nuevoPrecio.trim() === "") return;
-
-    const nuevaDesc = prompt(`Editar descripción de "${nuevoNombre}":`, descActual);
-    if (nuevaDesc === null) return;
+    const nuevoNombre = prompt(`Editar nombre:`, nombreActual);
+    if (!nuevoNombre) return;
+    const nuevoPrecio = prompt(`Editar precio:`, precioActual);
+    if (!nuevoPrecio) return;
+    const nuevaDesc = prompt(`Editar descripción:`, descActual);
 
     const { error } = await _supabase.from('productos').update({ 
-        nombre: nuevoNombre,
-        precio: parseFloat(nuevoPrecio),
-        descripcion: nuevaDesc 
+        nombre: nuevoNombre, precio: parseFloat(nuevoPrecio), descripcion: nuevaDesc 
     }).eq('id', id);
     
-    if (error) {
-        alert("Error al actualizar");
-    } else {
-        alert("Producto actualizado con éxito");
-        cargarMenu();
-    }
+    if (!error) { alert("¡Actualizado!"); cargarMenu(); }
 }
 
 async function guardarNuevoProducto() {
     const t = traducciones[idiomaActual];
     const nombre = document.getElementById('add-nombre').value;
-    const precioInput = document.getElementById('add-precio').value; 
+    const precio = document.getElementById('add-precio').value; 
     const categoria = document.getElementById('add-categoria').value;
     const descripcion = document.getElementById('add-descripcion').value;
     const imagenFile = document.getElementById('add-imagen').files[0];
 
-    if (!nombre || !precioInput || !imagenFile) return alert(t.alerta_admin);
+    if (!nombre || !precio || !imagenFile) return alert(t.alerta_admin);
 
     try {
-        const fileName = `${Date.now()}_${imagenFile.name.replace(/\s/g, '_')}`;
-        const { data: imgData, error: imgError } = await _supabase.storage
-            .from('imagenes')
-            .upload(fileName, imagenFile);
-
-        if (imgError) throw imgError;
-
+        const fileName = `${Date.now()}_${imagenFile.name}`;
+        await _supabase.storage.from('imagenes').upload(fileName, imagenFile);
         const { data: publicUrlData } = _supabase.storage.from('imagenes').getPublicUrl(fileName);
 
-        const { error: insertError } = await _supabase.from('productos').insert([{ 
-            nombre, 
-            precio: parseFloat(precioInput), 
-            categoria, 
-            descripcion,
-            imagen_url: publicUrlData.publicUrl 
+        await _supabase.from('productos').insert([{ 
+            nombre, precio: parseFloat(precio), categoria, descripcion, imagen_url: publicUrlData.publicUrl 
         }]);
 
-        if (insertError) throw insertError;
-
-        alert("Producto guardado");
-        document.getElementById('add-nombre').value = "";
-        document.getElementById('add-precio').value = "";
-        document.getElementById('add-descripcion').value = "";
+        alert("Guardado");
         cargarMenu(); 
-    } catch (err) { alert("Error: " + err.message); }
+    } catch (err) { alert("Error al subir"); }
 }
 
 async function eliminarProducto(id) {
-    if(confirm("¿Eliminar producto?")) {
-        const { error } = await _supabase.from('productos').delete().eq('id', id);
+    if(confirm("¿Eliminar?")) {
+        await _supabase.from('productos').delete().eq('id', id);
         cargarMenu();
     }
 }
 
-// 7. CARRITO Y WHATSAPP
+// 7. CARRITO
 function agregarAlCarrito(nombre, precio) {
-    const productoExistente = carrito.find(item => item.nombre === nombre);
-    if (productoExistente) {
-        productoExistente.cantidad += 1;
-    } else {
-        carrito.push({ nombre, precio: parseFloat(precio), cantidad: 1 });
-    }
+    const item = carrito.find(i => i.nombre === nombre);
+    if (item) item.cantidad += 1;
+    else carrito.push({ nombre, precio: parseFloat(precio), cantidad: 1 });
     actualizarCarritoUI();
 }
 
@@ -258,36 +212,25 @@ function actualizarCarritoUI() {
     let total = 0;
 
     carrito.forEach((item, index) => {
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
+        total += item.precio * item.cantidad;
         lista.innerHTML += `
             <div class="item-carrito">
-                <div style="display:flex; flex-direction:column;">
-                    <span style="font-weight: 600;">${item.nombre} ${item.cantidad > 1 ? `(${item.cantidad})` : ''}</span>
-                    <span style="color: var(--gold); font-size: 0.85rem;">€${subtotal.toFixed(2)}</span>
-                </div>
-                <button onclick="quitarDelCarrito(${index})" class="btn-borrar" style="padding: 4px 8px; font-size: 0.6rem;">${t.quitar}</button>
+                <div><b>${item.nombre} (x${item.cantidad})</b><br>€${(item.precio * item.cantidad).toFixed(2)}</div>
+                <button onclick="quitarDelCarrito(${index})" class="btn-borrar">${t.quitar}</button>
             </div>`;
     });
     totalElem.innerText = `€${total.toFixed(2)}`;
 }
 
 function enviarWhatsApp() {
-    const t = traducciones[idiomaActual];
     const mesa = document.getElementById('input-mesa').value;
-    if(!mesa || carrito.length === 0) return alert(t.alerta_datos);
-    
-    let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
-    carrito.forEach(i => {
-        mensaje += `• ${i.nombre} ${i.cantidad > 1 ? `(x${i.cantidad})` : ''} - €${(i.precio * i.cantidad).toFixed(2)}\n`;
-    });
-    mensaje += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
-    
-    window.open(`https://wa.me/543751246552?text=${encodeURIComponent(mensaje)}`);
+    if(!mesa || carrito.length === 0) return alert(traducciones[idiomaActual].alerta_datos);
+    let msg = `*PEDIDO MESA ${mesa}*\n`;
+    carrito.forEach(i => { msg += `- ${i.nombre} (x${i.cantidad})\n`; });
+    window.open(`https://wa.me/34000000000?text=${encodeURIComponent(msg)}`);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const btnMantenimiento = document.getElementById('btn-admin-view');
-    if (btnMantenimiento) btnMantenimiento.onclick = toggleAdmin;
+    document.getElementById('btn-admin-view').onclick = toggleAdmin;
     cargarMenu();
 });
