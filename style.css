@@ -2,10 +2,12 @@
 :root {
     --gold: #c5a059;
     --gold-gradient: linear-gradient(180deg, #f1d592 0%, #c5a059 50%, #8a6d3b 100%);
-    --bg-dark: #0a0a0a;
+    --bg-dark: #050505;
     --card-bg: rgba(30, 30, 30, 0.7);
     --text-main: #e0d8cc;
     --danger: #ff4444;
+    --edit-blue: #4a90e2;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* --- RESET Y BASE --- */
@@ -20,33 +22,72 @@ html { scroll-behavior: smooth; }
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--bg-dark);
+    background-color: #0a0a0a;
     background-image: url('https://www.transparenttextures.com/patterns/dark-leather.png');
     color: var(--text-main);
-    padding: 10px;
     display: flex;
     justify-content: center;
+    overflow-x: hidden;
+    line-height: 1.6;
 }
 
-/* --- SELECTOR DE IDIOMA (NUEVO) --- */
-.language-selector {
+/* --- PANTALLA DE PORTADA (HERO) --- */
+#welcome-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050505;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.bokeh-bg {
     position: absolute;
-    top: 15px;
-    left: 15px;
-    z-index: 1001;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 140, 0, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(255, 69, 0, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 165, 0, 0.05) 0%, transparent 60%);
+    filter: blur(60px);
 }
 
+.welcome-content { position: relative; text-align: center; z-index: 2; padding: 20px; }
+.divider-gold { width: 60px; height: 1px; background: var(--gold); margin: 25px auto; opacity: 0.6; }
+
+.btn-ver-menu {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--gold);
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    letter-spacing: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: var(--transition);
+}
+
+.btn-ver-menu:hover { color: var(--gold); letter-spacing: 9px; }
+.hidden-welcome { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* --- SELECTOR DE IDIOMA --- */
+.language-selector { position: absolute; top: 15px; left: 15px; z-index: 1001; }
 #select-idioma {
-    background: rgba(10, 10, 10, 0.9);
+    background: rgba(10, 10, 10, 0.8);
     color: var(--gold);
-    border: 1px solid rgba(197, 160, 89, 0.5);
-    padding: 5px 10px;
-    border-radius: 5px;
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    padding: 6px 10px;
+    border-radius: 4px;
     font-size: 0.75rem;
-    font-family: 'Poppins', sans-serif;
     cursor: pointer;
     outline: none;
-    text-transform: uppercase;
 }
 
 /* --- CONTENEDOR PRINCIPAL --- */
@@ -54,33 +95,27 @@ body {
     width: 100%;
     max-width: 600px;
     background: rgba(15, 15, 15, 0.98);
-    border: 1px solid rgba(197, 160, 89, 0.15);
-    padding: 30px 15px;
+    border-left: 1px solid rgba(197, 160, 89, 0.1);
+    border-right: 1px solid rgba(197, 160, 89, 0.1);
+    padding: 40px 15px;
     min-height: 100vh;
     position: relative;
 }
 
-/* --- HEADER Y LOGOTIPO --- */
-header {
-    text-align: center;
-    margin-bottom: 25px;
-    border-bottom: 2px double var(--gold);
-    padding-bottom: 25px;
-}
-
-.brand-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+header { 
+    text-align: center; 
+    margin-bottom: 30px; 
+    padding-bottom: 30px; 
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2); 
 }
 
 .logo-aires {
     display: flex;
+    justify-content: center;
     align-items: center;
-    font-family: 'Inter', sans-serif; 
-    font-size: 3.5rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 3rem;
     font-weight: 800;
-    line-height: 1;
     letter-spacing: 2px;
     background: var(--gold-gradient);
     -webkit-background-clip: text;
@@ -93,193 +128,118 @@ header {
     height: 0.85em;
     background: var(--gold-gradient);
     clip-path: polygon(50% 0%, 0% 100%, 22% 100%, 50% 35%, 78% 100%, 100% 100%);
-    margin-right: 2px;
+    margin-right: 3px;
 }
 
-.logo-estoril {
-    font-size: 0.9rem;
-    letter-spacing: 8px;
+.logo-estoril { font-size: 0.85rem; letter-spacing: 7px; color: var(--gold); text-transform: uppercase; margin-top: 5px; }
+.subtitle { font-size: 0.65rem; letter-spacing: 3px; opacity: 0.5; margin-top: 12px; text-transform: uppercase; }
+
+/* --- BOTÓN MANTENIMIENTO --- */
+#btn-admin-view {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(197, 160, 89, 0.2);
     color: var(--gold);
-    text-transform: uppercase;
-    margin-top: 5px;
-    font-weight: 400;
+    padding: 8px 16px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 4px;
+    transition: var(--transition);
 }
 
-.subtitle {
-    font-size: 0.7rem; 
-    letter-spacing: 3px; 
-    opacity: 0.6;
-    margin-top: 10px;
-    text-transform: uppercase;
+/* --- PANEL DE ADMINISTRACIÓN (CORREGIDO) --- */
+#form-admin { 
+    background: #0d0d0d; 
+    border: 1px solid var(--gold); 
+    padding: 25px; 
+    border-radius: 12px; 
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: none; /* Se activa por JS */
+}
+
+.input-admin-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Espacio real entre inputs para evitar que se encimen */
+}
+
+.input-admin-group input, 
+.input-admin-group select, 
+.input-admin-group textarea { 
+    display: block;
+    width: 100%;
+    background: #000; 
+    border: 1px solid rgba(197, 160, 89, 0.5); 
+    color: #fff; 
+    padding: 12px; 
+    outline: none; 
+    border-radius: 6px; 
+    font-family: inherit; 
+    font-size: 0.9rem;
+}
+
+textarea#add-descripcion { 
+    height: 100px; 
+    resize: none; 
 }
 
 /* --- NAVEGACIÓN --- */
 .nav-sectors {
     display: flex;
     overflow-x: auto;
-    gap: 10px;
+    gap: 12px;
     padding: 15px 0;
     position: sticky;
     top: 0;
-    background: rgba(15, 15, 15, 0.95);
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(10px);
     z-index: 100;
     scrollbar-width: none;
 }
 
-.nav-sectors::-webkit-scrollbar { display: none; }
-
 .nav-item {
-    border: 1px solid var(--gold);
+    border: 1px solid rgba(197, 160, 89, 0.4);
     color: var(--gold);
-    padding: 8px 18px;
-    border-radius: 20px;
+    padding: 8px 16px;
+    border-radius: 30px;
     text-decoration: none;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
     white-space: nowrap;
-    transition: 0.3s;
 }
 
-.nav-item:hover {
-    background: var(--gold);
-    color: #000;
-}
+/* --- PRODUCTOS --- */
+.category-title { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.5rem; margin: 45px 0 20px; display: flex; align-items: center; }
+.category-title::after { content: ""; flex: 1; height: 1px; background: var(--gold); margin-left: 15px; opacity: 0.2; }
 
-/* --- PRODUCTOS Y SECCIONES --- */
-.category-title {
-    font-family: 'Playfair Display', serif;
-    color: var(--gold);
-    font-size: 1.6rem;
-    margin: 40px 0 20px;
-    display: flex;
-    align-items: center;
-}
-
-.category-title::after {
-    content: ""; flex: 1; height: 1px; background: var(--gold); margin-left: 15px; opacity: 0.3;
-}
-
-.menu-item {
-    display: flex;
-    background: var(--card-bg);
-    margin-bottom: 15px;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
+.menu-item { display: flex; background: var(--card-bg); margin-bottom: 15px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.03); }
 .item-img { width: 110px; height: 110px; object-fit: cover; }
+.item-content { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.item-content h3 { font-size: 1rem; color: #fff; margin-bottom: 4px; }
+.price { color: var(--gold); font-weight: 700; font-size: 1.1rem; }
 
-.item-content {
-    padding: 12px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+/* --- BOTONES DE PRODUCTO --- */
+.btn-container { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.btn-order { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 12px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer; flex: 2; }
+.btn-ver-desc { background: rgba(255,255,255,0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; padding: 8px 12px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; text-transform: uppercase; }
+.btn-borrar { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 12px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
+.btn-editar { background: transparent; border: 1px solid var(--edit-blue); color: var(--edit-blue); padding: 6px 12px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
 
-.item-content h3 {
-    font-size: 1.1rem;
-    color: #fff;
-    margin-bottom: 5px;
-}
+/* --- MODAL --- */
+.modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
+.modal-content { background: #111; margin: 20% auto; padding: 30px; border: 1px solid var(--gold); width: 85%; max-width: 450px; border-radius: 12px; text-align: center; position: relative; }
+.close-modal { position: absolute; top: 10px; right: 15px; color: var(--gold); font-size: 28px; cursor: pointer; }
 
-.price {
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 1.2rem;
-}
+/* --- CARRITO --- */
+.cart-container { background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(197, 160, 89, 0.2); padding: 20px; border-radius: 10px; margin-top: 40px; }
+.item-carrito { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.cart-total { display: flex; justify-content: space-between; margin-top: 20px; border-top: 1px solid var(--gold); padding-top: 15px; font-size: 1.1rem; font-weight: 700; }
 
-/* --- BOTONES --- */
-.btn-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-order {
-    background: transparent;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-    flex: 2;
-}
-
-.btn-borrar {
-    background: transparent;
-    border: 1px solid var(--danger);
-    color: var(--danger);
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-transform: uppercase;
-}
-
-#btn-admin-view {
-    background: none;
-    border: 1px solid rgba(197, 160, 89, 0.3);
-    color: var(--gold);
-    padding: 8px 20px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-/* --- FORMULARIOS Y CARRITO --- */
-#form-admin, .cart-container {
-    background: rgba(20, 20, 20, 0.95);
-    border: 1px solid rgba(197, 160, 89, 0.3);
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 30px;
-}
-
-.input-mesa input, .input-mesa select {
-    background: #111 !important;
-    border: 1px solid var(--gold) !important;
-    color: #fff !important;
-    padding: 15px;
-    border-radius: 6px;
-    width: 100%;
-    margin-bottom: 15px;
-    outline: none;
-}
-
-.btn-finalizar {
-    width: 100%;
-    background: var(--gold-gradient);
-    color: #000;
-    border: none;
-    padding: 18px;
-    border-radius: 6px;
-    font-weight: 800;
-    text-transform: uppercase;
-    cursor: pointer;
-}
+.btn-finalizar { width: 100%; background: var(--gold-gradient); color: #000; border: none; padding: 16px; font-weight: 800; cursor: pointer; text-transform: uppercase; border-radius: 6px; margin-top: 15px; }
 
 /* --- FOOTER --- */
-footer {
-    text-align: center;
-    margin-top: 60px;
-    padding: 20px;
-    border-top: 1px solid rgba(197, 160, 89, 0.2);
-}
-
-.signature {
-    font-size: 0.65rem;
-    color: var(--gold);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
+footer { text-align: center; margin-top: 60px; padding: 30px; border-top: 1px solid rgba(197, 160, 89, 0.1); }
+.signature { font-size: 0.65rem; color: var(--gold); opacity: 0.5; letter-spacing: 3px; }
