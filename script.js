@@ -72,13 +72,11 @@ function cambiarIdioma(lang) {
     idiomaActual = lang;
     const t = traducciones[lang];
     
-    // Actualizar elementos de la portada
     const btnPortada = document.querySelector('.btn-ver-menu');
     const subPortada = document.querySelector('.welcome-subtitle');
     if(btnPortada) btnPortada.innerText = t.ver_menu;
     if(subPortada) subPortada.innerText = t.experiencia;
 
-    // Actualizar elementos del menú
     document.getElementById('btn-admin-view').innerText = t.mantenimiento;
     document.querySelector('.subtitle').innerText = t.experiencia;
     document.querySelector('#carrito .category-title').innerText = t.pedido;
@@ -151,7 +149,7 @@ async function cargarMenu() {
     });
 }
 
-// 6. ACCIONES ADMIN (EDICIÓN COMPLETA)
+// 6. ACCIONES ADMIN
 async function editarProducto(id, nombreActual, precioActual, descActual) {
     const nuevoNombre = prompt(`Nombre del producto:`, nombreActual);
     if (nuevoNombre === null || nuevoNombre.trim() === "") return;
@@ -206,7 +204,7 @@ async function eliminarProducto(id) {
     }
 }
 
-// 7. CARRITO Y WHATSAPP
+// 7. CARRITO Y WHATSAPP (CORREGIDO)
 function agregarAlCarrito(nombre, precio) {
     const item = carrito.find(i => i.nombre === nombre);
     if (item) item.cantidad += 1;
@@ -239,14 +237,25 @@ function actualizarCarritoUI() {
 }
 
 function enviarWhatsApp() {
+    const t = traducciones[idiomaActual];
     const mesa = document.getElementById('input-mesa').value;
-    if(!mesa || carrito.length === 0) return alert(traducciones[idiomaActual].alerta_datos);
     
-    let msg = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
-    carrito.forEach(i => { msg += `• ${i.nombre} (x${i.cantidad}) - €${(i.i.precio * i.cantidad).toFixed(2)}\n`; });
-    msg += `\n*TOTAL: ${document.getElementById('total-precio').innerText}*`;
+    if(!mesa || carrito.length === 0) {
+        return alert(t.alerta_datos);
+    }
     
-    window.open(`https://wa.me/34000000000?text=${encodeURIComponent(msg)}`);
+    let mensaje = `*PEDIDO MESA ${mesa} - AIRES ESTORIL*\n\n`;
+    
+    carrito.forEach(i => {
+        const subtotal = (i.precio * i.cantidad).toFixed(2);
+        mensaje += `• ${i.nombre} ${i.cantidad > 1 ? `(x${i.cantidad})` : ''} - €${subtotal}\n`;
+    });
+    
+    const totalTexto = document.getElementById('total-precio').innerText;
+    mensaje += `\n*TOTAL: ${totalTexto}*`;
+    
+    // CAMBIA ESTE NÚMERO POR EL TUYO REAL:
+    window.open(`https://wa.me/543751246552?text=${encodeURIComponent(mensaje)}`);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
